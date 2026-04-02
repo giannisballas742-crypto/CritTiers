@@ -1,569 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>MCTiers · Live Player Rankings | Google Sheets Sync</title>
-  <!-- Google Fonts + Font Awesome + PapaParse -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: #2c2c2e;
-      font-family: 'Inter', sans-serif;
-      color: #f0f3f8;
-      padding: 2rem 1.5rem;
-    }
-    .container {
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-    /* header */
-    .hero {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #fff, #c0c9dd);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .hero .badge {
-      background: rgba(255,255,240,0.08);
-      backdrop-filter: blur(4px);
-      padding: 0.3rem 1.2rem;
-      border-radius: 60px;
-      font-size: 0.85rem;
-      display: inline-block;
-      margin-top: 0.75rem;
-    }
-    /* data source panel */
-    .data-panel {
-      background: #232326;
-      border-radius: 1.8rem;
-      padding: 1.5rem 1.8rem;
-      margin: 1.5rem 0;
-      border: 1px solid #3a3a40;
-    }
-    .input-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: flex-end;
-      margin-bottom: 1rem;
-    }
-    .input-field {
-      flex: 2;
-      min-width: 250px;
-    }
-    .input-field label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #9aa2c2;
-    }
-    input {
-      background: #111113;
-      border: 1px solid #3a3a44;
-      padding: 0.7rem 1rem;
-      border-radius: 60px;
-      color: white;
-      width: 100%;
-      font-family: monospace;
-    }
-    .btn {
-      background: #3a3a40;
-      border: none;
-      padding: 0.7rem 1.6rem;
-      border-radius: 60px;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-primary {
-      background: #5865F2;
-      box-shadow: 0 4px 10px rgba(88,101,242,0.3);
-    }
-    .btn-primary:hover {
-      background: #4752c4;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #5865f2;
-    }
-    .status-msg {
-      background: #1a1a1e;
-      border-radius: 1rem;
-      padding: 0.8rem;
-      font-size: 0.8rem;
-      font-family: monospace;
-      margin-top: 0.8rem;
-    }
-    /* gamemode tabs / sections */
-    .gamemode-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      margin: 2rem 0 1rem;
-      border-bottom: 1px solid #3a3a44;
-      padding-bottom: 0.5rem;
-    }
-    .gm-tab {
-      background: none;
-      border: none;
-      color: #bcbfcf;
-      font-weight: 600;
-      padding: 0.5rem 1.2rem;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 1rem;
-    }
-    .gm-tab.active {
-      background: #5865F2;
-      color: white;
-      box-shadow: 0 2px 8px rgba(88,101,242,0.4);
-    }
-    .leaderboard-container {
-      background: #1f1f22;
-      border-radius: 1.8rem;
-      padding: 1.5rem;
-      margin: 1rem 0 2rem;
-      overflow-x: auto;
-    }
-    .leaderboard-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    .leaderboard-table th, .leaderboard-table td {
-      text-align: left;
-      padding: 0.9rem 0.6rem;
-      border-bottom: 1px solid #2e2e34;
-    }
-    .leaderboard-table th {
-      color: #b9c2e6;
-      font-weight: 600;
-      background: #19191c;
-    }
-    .rank-col {
-      width: 70px;
-      font-weight: 700;
-    }
-    .tier-badge {
-      display: inline-block;
-      background: #2a2a30;
-      padding: 0.2rem 0.8rem;
-      border-radius: 30px;
-      font-weight: 800;
-      font-size: 0.8rem;
-    }
-    .tier-S { color: #FFD966; background: #2f2e2a; }
-    .tier-A { color: #A8E6CF; }
-    .tier-B { color: #CDB4DB; }
-    .points {
-      font-weight: 700;
-      color: #ffd966;
-    }
-    .region {
-      background: #2a2a30;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      display: inline-block;
-    }
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: #8f95b0;
-    }
-    .bot-panel {
-      background: #232326;
-      border-radius: 2rem;
-      padding: 1.5rem;
-      margin: 2rem 0;
-      border-left: 5px solid #5865F2;
-    }
-    .footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #8f95b0;
-      border-top: 1px solid #333338;
-      padding-top: 1.5rem;
-      margin-top: 1rem;
-    }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e1e24;
-      border-radius: 40px;
-      padding: 10px 22px;
-      z-index: 1000;
-      border-left: 4px solid #5865f2;
-      font-size: 0.85rem;
-    }
-    @media (max-width: 700px) {
-      body { padding: 1rem; }
-      .leaderboard-table th, .leaderboard-table td { padding: 0.5rem 0.3rem; font-size: 0.75rem; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mace Tier List</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #808080; /* gray background */
+    color: white;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    background: #444;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: #222;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+}
+
+.player-card {
+    background: #333;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+</style>
 </head>
 <body>
-<div class="container">
-  <div class="hero">
-    <h1><i class="fas fa-chart-line"></i> MCTiers · LIVE RANKINGS</h1>
-    <div class="badge"><i class="fas fa-sync-alt"></i> Auto-sync from Google Sheet · Player tiers · Regions · Points · Placements</div>
-    <p style="margin-top: 0.8rem; color:#bcbfcf;">Spearmace · MaceCart · Modern · DSMP Mace · NethSMP — updated automatically</p>
-  </div>
 
-  <!-- Google Sheet connector -->
-  <div class="data-panel">
-    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center;">
-      <div><i class="fab fa-google"></i> <strong>Google Sheets Sync</strong> — publish your sheet as CSV (File → Share → Publish to web → CSV)</div>
-      <button class="btn btn-outline" id="templateBtn"><i class="fas fa-download"></i> Download CSV template</button>
-    </div>
-    <div class="input-group" style="margin-top: 1rem;">
-      <div class="input-field">
-        <label><i class="fas fa-link"></i> Google Sheets CSV URL</label>
-        <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv" value="">
-      </div>
-      <button class="btn btn-primary" id="loadSheetBtn"><i class="fas fa-cloud-download-alt"></i> Sync & Auto-detect</button>
-      <button class="btn" id="refreshBtn"><i class="fas fa-redo-alt"></i> Refresh</button>
-    </div>
-    <div class="status-msg" id="syncStatus">
-      <i class="fas fa-info-circle"></i> No sheet loaded. Use default demo data. Provide a CSV with columns: Player, Gamemode, Tier, Region, Points, Placement (auto-detected).
-    </div>
-  </div>
+<header>Mace Tier List</header>
 
-  <!-- Gamemode Tabs -->
-  <div class="gamemode-nav" id="gamemodeTabs"></div>
+<div class="tabs" id="tabs"></div>
 
-  <!-- Leaderboard display -->
-  <div class="leaderboard-container">
-    <div id="leaderboardContent">
-      <div class="empty-state">Loading leaderboards...</div>
-    </div>
-  </div>
-
-  <!-- Discord bot panel (linked to same data) -->
-  <div class="bot-panel">
-    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-      <div style="background:#5865F2; width:48px; height:48px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-size:1.8rem;"><i class="fab fa-discord"></i></div>
-      <div><strong style="font-size:1.2rem;">MCTiers Discord Bot</strong><br>Live data from the same Google Sheet</div>
-      <div style="margin-left: auto; background:#2b732b; padding:0.2rem 0.9rem; border-radius:30px; font-size:0.7rem;"><i class="fas fa-circle"></i> ACTIVE · SHEET SYNC</div>
-    </div>
-    <div class="bot-actions" style="display:flex; gap:1rem; margin:1rem 0; flex-wrap:wrap;">
-      <button class="btn btn-primary" id="botSyncBtn"><i class="fab fa-discord"></i> Simulate bot sync</button>
-      <button class="btn btn-outline" id="botInviteBtn"><i class="fas fa-plus-circle"></i> Invite bot</button>
-      <button class="btn" id="botCmdBtn"><i class="fas fa-terminal"></i> /top players</button>
-    </div>
-    <div class="status-msg" id="botLogMsg" style="background:#111113;">
-      <i class="fab fa-discord"></i> [BOT] Waiting for data. The bot will reflect player rankings, tiers & placements from the sheet.
-    </div>
-    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
-      <div style="background:#1b1b1e; border-radius:60px; padding:0.4rem 1.2rem;"><i class="fas fa-server"></i> PVP SERVER IP: <strong>mcpvp.club</strong> <button id="copyIpBtn" style="background:none; border:none; color:#b9c3ff; cursor:pointer;"><i class="far fa-copy"></i></button></div>
-    </div>
-  </div>
-  <div class="footer">
-    <span><i class="fas fa-trophy"></i> Auto-detects columns: Player, Gamemode, Tier, Region, Points, Placement</span>
-    <span><i class="fab fa-google"></i> Sheet updates → Website updates instantly</span>
-  </div>
-</div>
+<div class="container" id="content"></div>
 
 <script>
-  // ---------- DATA MODEL ----------
-  let rawPlayers = [];     // each object: {player, gamemode, tier, region, points, placement}
-  const GAMEMODES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
-  let currentGamemode = GAMEMODES[0];
+const gameModes = [
+    "Spearmace",
+    "MaceCart",
+    "Modern",
+    "DSMP Mace",
+    "NethSMP"
+];
 
-  // Helper: show toast
-  function showToast(msg, isErr = false) {
-    let t = document.querySelector('.toast');
-    if(t) t.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `<i class="fas ${isErr ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${msg}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+const sheetURL = "https://opensheet.elk.sh/YOUR_SHEET_ID/Sheet1";
 
-  // Default demo data (showcase Spearmace, MaceCart, Modern, DSMP Mace, NethSMP with players)
-  function getDefaultPlayers() {
-    return [
-      { player: "xNestorio", gamemode: "Spearmace", tier: "S", region: "NA", points: 2840, placement: 1 },
-      { player: "Clownpierce", gamemode: "Spearmace", tier: "A+", region: "EU", points: 2560, placement: 2 },
-      { player: "Couriway", gamemode: "Spearmace", tier: "A", region: "NA", points: 2310, placement: 3 },
-      { player: "Fruitberries", gamemode: "MaceCart", tier: "S", region: "OCE", points: 2980, placement: 1 },
-      { player: "Purpled", gamemode: "MaceCart", tier: "A+", region: "NA", points: 2730, placement: 2 },
-      { player: "Hannahxxrose", gamemode: "MaceCart", tier: "B+", region: "EU", points: 2150, placement: 3 },
-      { player: "Technoblade", gamemode: "Modern", tier: "S+", region: "NA", points: 3120, placement: 1 },
-      { player: "Dream", gamemode: "Modern", tier: "S", region: "NA", points: 2890, placement: 2 },
-      { player: "Sapnap", gamemode: "Modern", tier: "A+", region: "NA", points: 2710, placement: 3 },
-      { player: "TommyInnit", gamemode: "DSMP Mace", tier: "B+", region: "EU", points: 1890, placement: 1 },
-      { player: "Tubbo", gamemode: "DSMP Mace", tier: "B", region: "EU", points: 1740, placement: 2 },
-      { player: "Ranboo", gamemode: "DSMP Mace", tier: "C+", region: "NA", points: 1520, placement: 3 },
-      { player: "Fundy", gamemode: "NethSMP", tier: "A", region: "EU", points: 2430, placement: 1 },
-      { player: "Philza", gamemode: "NethSMP", tier: "A+", region: "EU", points: 2670, placement: 2 },
-      { player: "WilburSoot", gamemode: "NethSMP", tier: "B+", region: "EU", points: 2010, placement: 3 }
-    ];
-  }
+let currentMode = gameModes[0];
+let data = [];
 
-  // Load default into rawPlayers
-  function loadDefaultData() {
-    rawPlayers = getDefaultPlayers();
-    document.getElementById('syncStatus').innerHTML = `<i class="fas fa-database"></i> Using demo data (Spearmace, MaceCart, Modern, DSMP Mace, NethSMP). Provide a Google Sheet CSV to auto-update.`;
-    renderTabsAndLeaderboard();
-    updateBotLog();
-  }
+function createTabs() {
+    const tabsDiv = document.getElementById("tabs");
+    tabsDiv.innerHTML = "";
 
-  // Auto-detect column mapping from CSV headers
-  function detectColumns(headers) {
-    let map = { player: -1, gamemode: -1, tier: -1, region: -1, points: -1, placement: -1 };
-    for (let i = 0; i < headers.length; i++) {
-      let h = headers[i].toLowerCase().trim();
-      if (h.includes('player') || h === 'name' || h === 'ign') map.player = i;
-      if (h.includes('gamemode') || h === 'mode' || h === 'game mode') map.gamemode = i;
-      if (h.includes('tier') || h === 'rank') map.tier = i;
-      if (h.includes('region') || h === 'reg') map.region = i;
-      if (h.includes('point') || h === 'points' || h === 'score') map.points = i;
-      if (h.includes('placement') || h === 'place' || h === 'pos') map.placement = i;
+    gameModes.forEach(mode => {
+        const tab = document.createElement("div");
+        tab.className = "tab" + (mode === currentMode ? " active" : "");
+        tab.innerText = mode;
+        tab.onclick = () => {
+            currentMode = mode;
+            createTabs();
+            render();
+        };
+        tabsDiv.appendChild(tab);
+    });
+}
+
+function render() {
+    const container = document.getElementById("content");
+    container.innerHTML = "";
+
+    const filtered = data.filter(p => p.Mode === currentMode);
+
+    filtered.forEach(player => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+
+        card.innerHTML = `
+            <div>
+                <strong>${player.Name}</strong><br>
+                Region: ${player.Region}
+            </div>
+            <div>
+                Tier: ${player.Tier}
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+async function fetchData() {
+    try {
+        const res = await fetch(sheetURL);
+        data = await res.json();
+        render();
+    } catch (e) {
+        console.error("Error loading sheet", e);
     }
-    // fallback heuristics
-    if (map.player === -1 && headers.length > 0) map.player = 0;
-    if (map.gamemode === -1 && headers.length > 1) map.gamemode = 1;
-    if (map.tier === -1 && headers.length > 2) map.tier = 2;
-    if (map.region === -1 && headers.length > 3) map.region = 3;
-    if (map.points === -1 && headers.length > 4) map.points = 4;
-    if (map.placement === -1 && headers.length > 5) map.placement = 5;
-    return map;
-  }
+}
 
-  // Parse CSV rows into player objects
-  function parseCSVToPlayers(rows, headers) {
-    const mapping = detectColumns(headers);
-    const players = [];
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      if (!row || row.length === 0) continue;
-      const player = mapping.player !== -1 ? (row[mapping.player] || "").trim() : null;
-      if (!player) continue;
-      let gamemode = mapping.gamemode !== -1 ? (row[mapping.gamemode] || "").trim() : null;
-      if (!gamemode) continue;
-      // normalize gamemode to match our GAMEMODES (case-insensitive)
-      let matchedGm = GAMEMODES.find(g => g.toLowerCase() === gamemode.toLowerCase());
-      if (!matchedGm) continue; // skip unknown gamemodes
-      let tier = mapping.tier !== -1 ? (row[mapping.tier] || "").trim() : "?";
-      let region = mapping.region !== -1 ? (row[mapping.region] || "").trim() : "?";
-      let points = mapping.points !== -1 ? parseFloat(row[mapping.points]) : 0;
-      if (isNaN(points)) points = 0;
-      let placement = mapping.placement !== -1 ? parseInt(row[mapping.placement]) : 999;
-      if (isNaN(placement)) placement = 999;
-      players.push({ player, gamemode: matchedGm, tier, region, points, placement });
-    }
-    return players;
-  }
+createTabs();
+fetchData();
 
-  // Fetch CSV from URL and update
-  function syncFromGoogleSheet(url) {
-    if (!url || !url.trim()) {
-      showToast("Please enter a valid Google Sheets CSV URL", true);
-      return false;
-    }
-    document.getElementById('syncStatus').innerHTML = `<i class="fas fa-spinner fa-pulse"></i> Fetching from ${url} ...`;
-    fetch(url, { cache: "no-store" })
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.text();
-      })
-      .then(csvText => {
-        Papa.parse(csvText, {
-          header: false,
-          skipEmptyLines: true,
-          complete: (results) => {
-            const rows = results.data;
-            if (rows.length < 2) throw new Error("CSV has insufficient rows");
-            const headers = rows[0].map(cell => (cell ? cell.trim() : ""));
-            const dataRows = rows.slice(1);
-            const players = parseCSVToPlayers(dataRows, headers);
-            if (players.length === 0) {
-              document.getElementById('syncStatus').innerHTML = `<i class="fas fa-exclamation-triangle"></i> No valid players found in CSV. Ensure columns: Player, Gamemode (${GAMEMODES.join(', ')}), Tier, Region, Points, Placement. Using demo.`;
-              loadDefaultData();
-            } else {
-              rawPlayers = players;
-              document.getElementById('syncStatus').innerHTML = `<i class="fas fa-check-circle"></i> Loaded ${players.length} players from Google Sheet. Auto-detected columns.`;
-              renderTabsAndLeaderboard();
-              updateBotLog();
-              showToast(`✅ Synced ${players.length} players from sheet`);
-            }
-          },
-          error: (err) => {
-            throw err;
-          }
-        });
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('syncStatus').innerHTML = `<i class="fas fa-times-circle"></i> Error: ${err.message}. Using default demo.`;
-        loadDefaultData();
-        showToast("Failed to load CSV, using demo data", true);
-      });
-    return true;
-  }
-
-  // Render gamemode tabs and leaderboard for current tab
-  function renderTabsAndLeaderboard() {
-    const tabsContainer = document.getElementById('gamemodeTabs');
-    tabsContainer.innerHTML = '';
-    GAMEMODES.forEach(gm => {
-      const btn = document.createElement('button');
-      btn.innerText = gm;
-      btn.className = `gm-tab ${currentGamemode === gm ? 'active' : ''}`;
-      btn.addEventListener('click', () => {
-        currentGamemode = gm;
-        renderTabsAndLeaderboard();
-      });
-      tabsContainer.appendChild(btn);
-    });
-    renderLeaderboard();
-  }
-
-  function renderLeaderboard() {
-    const container = document.getElementById('leaderboardContent');
-    const playersForMode = rawPlayers.filter(p => p.gamemode === currentGamemode);
-    if (playersForMode.length === 0) {
-      container.innerHTML = `<div class="empty-state"><i class="fas fa-users-slash"></i> No players ranked in ${currentGamemode} yet. Add entries to Google Sheet.</div>`;
-      return;
-    }
-    // sort by placement (ascending), then by points descending as fallback
-    const sorted = [...playersForMode].sort((a,b) => {
-      if (a.placement !== b.placement) return a.placement - b.placement;
-      return b.points - a.points;
-    });
-    const table = document.createElement('table');
-    table.className = 'leaderboard-table';
-    table.innerHTML = `
-      <thead>
-        <tr><th>#</th><th>Player</th><th>Tier</th><th>Region</th><th>Points</th><th>Placement</th></tr>
-      </thead>
-      <tbody id="leaderboardBody"></tbody>
-    `;
-    const tbody = table.querySelector('#leaderboardBody');
-    sorted.forEach((p, idx) => {
-      const rank = idx + 1;
-      let tierClass = '';
-      if (p.tier.toUpperCase().includes('S')) tierClass = 'tier-S';
-      else if (p.tier.toUpperCase().includes('A')) tierClass = 'tier-A';
-      else tierClass = 'tier-B';
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td class="rank-col">${rank}</td>
-        <td><strong>${escapeHtml(p.player)}</strong></td>
-        <td><span class="tier-badge ${tierClass}">${escapeHtml(p.tier)}</span></td>
-        <td><span class="region">${escapeHtml(p.region)}</span></td>
-        <td class="points">${p.points.toLocaleString()}</td>
-        <td>${p.placement === 999 ? '—' : p.placement}</td>
-      `;
-      tbody.appendChild(row);
-    });
-    container.innerHTML = '';
-    container.appendChild(table);
-  }
-
-  function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-  // Discord bot panel updates (mirror current data)
-  function updateBotLog() {
-    const total = rawPlayers.length;
-    const distinctGms = new Set(rawPlayers.map(p => p.gamemode)).size;
-    const topPlayers = rawPlayers.filter(p => p.gamemode === currentGamemode).sort((a,b)=>a.placement-b.placement).slice(0,3);
-    let topText = topPlayers.map(p=>`${p.player} (${p.tier})`).join(', ') || 'none';
-    const logDiv = document.getElementById('botLogMsg');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] 📊 Active sheet data: ${total} total players across ${distinctGms} gamemodes.<br>
-    🎯 Current leaderboard for ${currentGamemode}: Top 3 → ${topText}<br>
-    🤖 Bot commands: /top, /tier, /region — all pull live from Google Sheet.`;
-  }
-
-  // Simulate bot interactions
-  function botSync() {
-    if (rawPlayers.length === 0) { showToast("No data loaded, use demo or sync sheet first."); return; }
-    showToast(`🤖 Bot synced: ${rawPlayers.length} players, latest rankings from sheet.`);
-    updateBotLog();
-  }
-  function botInvite() {
-    showToast("🔗 MCTiers Bot invite: https://discord.com/oauth2/example (real bot would use same Google Sheet)");
-    const logDiv = document.getElementById('botLogMsg');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] Invite link generated. The bot will have read access to your Google Sheet CSV and auto-update rankings.`;
-  }
-  function botTopCommand() {
-    if (rawPlayers.length === 0) { showToast("No players loaded."); return; }
-    const topAll = [...rawPlayers].sort((a,b)=>b.points - a.points).slice(0,5);
-    const msg = topAll.map((p,i)=>`${i+1}. ${p.player} (${p.gamemode}) ${p.points}pts`).join('\n');
-    const logDiv = document.getElementById('botLogMsg');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] \`/top players\`\n\`\`\`\n${msg}\n\`\`\`\nData source: Google Sheet (live)`;
-    showToast(`🏆 Top player: ${topAll[0]?.player} with ${topAll[0]?.points} points`);
-  }
-  function copyServerIp() { navigator.clipboard.writeText("mcpvp.club"); showToast("✅ Copied server IP: mcpvp.club"); }
-
-  // Download CSV template with columns + example rows for the 5 gamemodes
-  function downloadTemplate() {
-    const headers = ["Player", "Gamemode", "Tier", "Region", "Points", "Placement"];
-    const rows = [
-      ["xNestorio", "Spearmace", "S", "NA", "2840", "1"],
-      ["Clownpierce", "Spearmace", "A+", "EU", "2560", "2"],
-      ["Fruitberries", "MaceCart", "S", "OCE", "2980", "1"],
-      ["Technoblade", "Modern", "S+", "NA", "3120", "1"],
-      ["TommyInnit", "DSMP Mace", "B+", "EU", "1890", "1"],
-      ["Fundy", "NethSMP", "A", "EU", "2430", "1"],
-      ["Purpled", "MaceCart", "A+", "NA", "2730", "2"],
-      ["Dream", "Modern", "S", "NA", "2890", "2"]
-    ];
-    const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "mctiers_sheet_template.csv";
-    link.click();
-    URL.revokeObjectURL(link.href);
-    showToast("📥 Template downloaded — add your players and publish as CSV");
-  }
-
-  // Event listeners + initial load
-  document.addEventListener('DOMContentLoaded', () => {
-    loadDefaultData();
-    document.getElementById('loadSheetBtn').addEventListener('click', () => {
-      const url = document.getElementById('sheetUrl').value.trim();
-      if (url) syncFromGoogleSheet(url);
-      else showToast("Please paste a Google Sheets CSV URL", true);
-    });
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      if (rawPlayers.length && rawPlayers !== getDefaultPlayers()) {
-        const url = document.getElementById('sheetUrl').value.trim();
-        if (url) syncFromGoogleSheet(url);
-        else { renderTabsAndLeaderboard(); showToast("Refreshed current data"); }
-      } else { renderTabsAndLeaderboard(); showToast("Reloaded demo data"); }
-      updateBotLog();
-    });
-    document.getElementById('templateBtn').addEventListener('click', downloadTemplate);
-    document.getElementById('botSyncBtn').addEventListener('click', botSync);
-    document.getElementById('botInviteBtn').addEventListener('click', botInvite);
-    document.getElementById('botCmdBtn').addEventListener('click', botTopCommand);
-    document.getElementById('copyIpBtn').addEventListener('click', copyServerIp);
-  });
+// Auto refresh every 30 seconds
+setInterval(fetchData, 30000);
 </script>
+
 </body>
 </html>
