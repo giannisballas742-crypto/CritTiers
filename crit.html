@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mace Tier List</title>
+<title>Mace Modes</title>
 
 <style>
 body {
@@ -11,150 +11,62 @@ body {
     font-family: Arial, sans-serif;
     background-color: #808080;
     color: white;
+    text-align: center;
 }
 
 header {
-    text-align: center;
-    padding: 20px;
-    font-size: 28px;
+    font-size: 32px;
+    padding: 30px 0;
     font-weight: bold;
 }
 
 .tabs {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
 }
 
 .tab {
-    padding: 10px 20px;
+    padding: 12px 25px;
     background: #444;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+.tab:hover {
+    background: #555;
 }
 
 .tab.active {
     background: #222;
-}
-
-.container {
-    width: 90%;
-    margin: auto;
-}
-
-.player-card {
-    background: #333;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
 }
 </style>
 </head>
 
 <body>
 
-<header>Mace Tier List</header>
+<header>Mace Gamemodes</header>
 
-<div class="tabs" id="tabs"></div>
-<div class="container" id="content"></div>
+<div class="tabs">
+    <div class="tab active">Spearmace</div>
+    <div class="tab">MaceCart</div>
+    <div class="tab">Modern</div>
+    <div class="tab">DSMP Mace</div>
+    <div class="tab">NethSMP</div>
+</div>
 
 <script>
-const gameModes = [
-    "Spearmace",
-    "MaceCart",
-    "Modern",
-    "DSMP Mace",
-    "NethSMP"
-];
+// Optional: make tabs clickable (visual only)
+const tabs = document.querySelectorAll(".tab");
 
-// 🔥 PUT YOUR CSV LINK HERE
-const sheetURL = "PASTE_YOUR_CSV_LINK_HERE";
-
-let currentMode = gameModes[0];
-let data = [];
-
-// Create tabs
-function createTabs() {
-    const tabsDiv = document.getElementById("tabs");
-    tabsDiv.innerHTML = "";
-
-    gameModes.forEach(mode => {
-        const tab = document.createElement("div");
-        tab.className = "tab" + (mode === currentMode ? " active" : "");
-        tab.innerText = mode;
-
-        tab.onclick = () => {
-            currentMode = mode;
-            createTabs();
-            render();
-        };
-
-        tabsDiv.appendChild(tab);
-    });
-}
-
-// Render players
-function render() {
-    const container = document.getElementById("content");
-    container.innerHTML = "";
-
-    const filtered = data.filter(p => p.Mode === currentMode);
-
-    filtered.forEach(player => {
-        const card = document.createElement("div");
-        card.className = "player-card";
-
-        card.innerHTML = `
-            <div>
-                <strong>${player.Name}</strong><br>
-                Region: ${player.Region}
-            </div>
-            <div>
-                Tier: ${player.Tier}
-            </div>
-        `;
-
-        container.appendChild(card);
-    });
-}
-
-// Parse CSV
-function parseCSV(text) {
-    const rows = text.trim().split("\n").map(r => r.split(","));
-    const headers = rows[0];
-
-    return rows.slice(1).map(row => {
-        let obj = {};
-        headers.forEach((h, i) => {
-            obj[h.trim()] = (row[i] || "").trim();
-        });
-        return obj;
-    });
-}
-
-// Fetch data
-async function fetchData() {
-    try {
-        const res = await fetch(sheetURL);
-        const text = await res.text();
-
-        data = parseCSV(text);
-        render();
-    } catch (e) {
-        console.error("Error loading CSV:", e);
-    }
-}
-
-// Init
-createTabs();
-fetchData();
-
-// Auto update every 30s
-setInterval(fetchData, 30000);
+tabs.forEach(tab => {
+    tab.onclick = () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+    };
+});
 </script>
 
 </body>
