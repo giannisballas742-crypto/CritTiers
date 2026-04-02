@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>MCTiers · Dynamic CSV / Google Sheets PVP Rankings</title>
-  <!-- Google Fonts + Font Awesome + PapaParse for robust CSV parsing -->
+  <title>MCTiers · Live Player Rankings | Google Sheets Sync</title>
+  <!-- Google Fonts + Font Awesome + PapaParse -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -14,20 +14,16 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
-      background: #2c2c2e;   /* deep gray background */
+      background: #2c2c2e;
       font-family: 'Inter', sans-serif;
       color: #f0f3f8;
-      line-height: 1.4;
       padding: 2rem 1.5rem;
     }
-
     .container {
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 0 auto;
     }
-
     /* header */
     .hero {
       text-align: center;
@@ -36,11 +32,10 @@
     .hero h1 {
       font-size: 3rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #FFFFFF 0%, #c0c9dd 100%);
+      background: linear-gradient(135deg, #fff, #c0c9dd);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      letter-spacing: -0.02em;
     }
     .hero .badge {
       background: rgba(255,255,240,0.08);
@@ -51,69 +46,39 @@
       display: inline-block;
       margin-top: 0.75rem;
     }
-    .hero p {
-      color: #bcbfcf;
-      max-width: 700px;
-      margin: 1rem auto 0;
-    }
-
-    /* data source panel (CSV / Google Sheets) */
+    /* data source panel */
     .data-panel {
       background: #232326;
       border-radius: 1.8rem;
       padding: 1.5rem 1.8rem;
-      margin: 1.8rem 0;
+      margin: 1.5rem 0;
       border: 1px solid #3a3a40;
-    }
-    .data-title {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     .input-group {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
-      margin-bottom: 1.5rem;
       align-items: flex-end;
+      margin-bottom: 1rem;
     }
     .input-field {
-      flex: 1;
-      min-width: 200px;
+      flex: 2;
+      min-width: 250px;
     }
     .input-field label {
-      display: block;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 5px;
       color: #9aa2c2;
     }
-    input, .file-label {
+    input {
       background: #111113;
       border: 1px solid #3a3a44;
       padding: 0.7rem 1rem;
       border-radius: 60px;
       color: white;
       width: 100%;
-      font-family: 'Inter', monospace;
-      font-size: 0.9rem;
-    }
-    .file-label {
-      display: inline-block;
-      text-align: center;
-      cursor: pointer;
-      background: #2a2a30;
-      transition: 0.2s;
-    }
-    .file-label:hover {
-      background: #3a3a44;
-    }
-    input[type="file"] {
-      display: none;
+      font-family: monospace;
     }
     .btn {
       background: #3a3a40;
@@ -123,11 +88,10 @@
       font-weight: 600;
       color: white;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: 0.2s;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.85rem;
     }
     .btn-primary {
       background: #5865F2;
@@ -135,150 +99,111 @@
     }
     .btn-primary:hover {
       background: #4752c4;
-      transform: scale(0.97);
     }
     .btn-outline {
       background: transparent;
       border: 1px solid #5865f2;
     }
-    .btn-sm {
-      padding: 0.5rem 1.2rem;
-      font-size: 0.8rem;
-    }
     .status-msg {
-      margin-top: 1rem;
       background: #1a1a1e;
       border-radius: 1rem;
       padding: 0.8rem;
-      font-size: 0.85rem;
-      color: #b9c2e6;
+      font-size: 0.8rem;
       font-family: monospace;
+      margin-top: 0.8rem;
     }
-
-    /* gamemode grid */
-    .gamemode-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 1.8rem;
-      margin: 2rem 0 2.5rem;
-    }
-    .tier-card {
-      background: #1f1f22;
-      border-radius: 2rem;
-      padding: 1.5rem;
-      transition: transform 0.2s, box-shadow 0.2s;
-      border: 1px solid rgba(255,255,245,0.08);
-    }
-    .tier-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 30px -12px black;
-      border-color: rgba(255,215,0,0.3);
-    }
-    .card-header {
+    /* gamemode tabs / sections */
+    .gamemode-nav {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.8rem;
       flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 2rem 0 1rem;
+      border-bottom: 1px solid #3a3a44;
+      padding-bottom: 0.5rem;
     }
-    .gamemode-name {
-      font-size: 1.7rem;
+    .gm-tab {
+      background: none;
+      border: none;
+      color: #bcbfcf;
+      font-weight: 600;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 1rem;
+    }
+    .gm-tab.active {
+      background: #5865F2;
+      color: white;
+      box-shadow: 0 2px 8px rgba(88,101,242,0.4);
+    }
+    .leaderboard-container {
+      background: #1f1f22;
+      border-radius: 1.8rem;
+      padding: 1.5rem;
+      margin: 1rem 0 2rem;
+      overflow-x: auto;
+    }
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .leaderboard-table th, .leaderboard-table td {
+      text-align: left;
+      padding: 0.9rem 0.6rem;
+      border-bottom: 1px solid #2e2e34;
+    }
+    .leaderboard-table th {
+      color: #b9c2e6;
+      font-weight: 600;
+      background: #19191c;
+    }
+    .rank-col {
+      width: 70px;
       font-weight: 700;
-      background: linear-gradient(145deg, #fff, #cfd6ee);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
     }
     .tier-badge {
-      font-weight: 800;
-      font-size: 1.4rem;
+      display: inline-block;
       background: #2a2a30;
-      padding: 0.2rem 0.9rem;
-      border-radius: 50px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-    }
-    .tier-S { color: #FFD966; text-shadow: 0 0 2px #ffb347; }
-    .tier-Splus { color: #F4C542; }
-    .tier-A { color: #A8E6CF; }
-    .tier-Aplus { color: #B8F2D6; }
-    .tier-Bplus { color: #9BB8E0; }
-    .tier-B { color: #CDB4DB; }
-    .desc {
-      font-size: 0.85rem;
-      color: #b9bfdb;
-      margin: 0.8rem 0;
-      line-height: 1.4;
-    }
-    .stat-line {
-      display: flex;
-      justify-content: space-between;
-      border-top: 1px dashed rgba(255,255,255,0.1);
-      margin-top: 0.7rem;
-      padding-top: 0.7rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-weight: 800;
       font-size: 0.8rem;
     }
-    .stat-value {
-      color: #ffd966;
+    .tier-S { color: #FFD966; background: #2f2e2a; }
+    .tier-A { color: #A8E6CF; }
+    .tier-B { color: #CDB4DB; }
+    .points {
       font-weight: 700;
+      color: #ffd966;
     }
-
-    /* discord bot panel */
+    .region {
+      background: #2a2a30;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      display: inline-block;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #8f95b0;
+    }
     .bot-panel {
       background: #232326;
       border-radius: 2rem;
-      padding: 1.5rem 2rem;
+      padding: 1.5rem;
       margin: 2rem 0;
       border-left: 5px solid #5865F2;
     }
-    .bot-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-    .bot-icon {
-      background: #5865F2;
-      width: 48px;
-      height: 48px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-    }
-    .bot-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin: 1.2rem 0;
-    }
-    .log-area {
-      background: #111113;
-      border-radius: 1.2rem;
-      padding: 1rem;
-      font-family: monospace;
-      font-size: 0.8rem;
-      border-left: 3px solid #5865f2;
-    }
-    .server-ip {
-      background: #1b1b1e;
-      border-radius: 60px;
-      padding: 0.4rem 1.2rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
     .footer {
-      margin-top: 2rem;
       text-align: center;
       font-size: 0.75rem;
       color: #8f95b0;
       border-top: 1px solid #333338;
       padding-top: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
+      margin-top: 1rem;
     }
     .toast {
       position: fixed;
@@ -291,348 +216,353 @@
       z-index: 1000;
       border-left: 4px solid #5865f2;
       font-size: 0.85rem;
-      pointer-events: none;
     }
-    button:active { transform: scale(0.97); }
-    i { margin-right: 5px; }
+    @media (max-width: 700px) {
+      body { padding: 1rem; }
+      .leaderboard-table th, .leaderboard-table td { padding: 0.5rem 0.3rem; font-size: 0.75rem; }
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="hero">
     <h1><i class="fas fa-chart-line"></i> MCTiers · LIVE RANKINGS</h1>
-    <div class="badge"><i class="fas fa-database"></i> Google Sheets + CSV powered | Auto‑detect columns</div>
-    <p>Connect your own Google Sheet (CSV export) or upload a CSV file. The Discord bot reads the exact same sheet — everything stays in sync.</p>
+    <div class="badge"><i class="fas fa-sync-alt"></i> Auto-sync from Google Sheet · Player tiers · Regions · Points · Placements</div>
+    <p style="margin-top: 0.8rem; color:#bcbfcf;">Spearmace · MaceCart · Modern · DSMP Mace · NethSMP — updated automatically</p>
   </div>
 
-  <!-- Data source: CSV upload or Google Sheets link -->
+  <!-- Google Sheet connector -->
   <div class="data-panel">
-    <div class="data-title"><i class="fas fa-cloud-upload-alt"></i> Data source (auto‑detect)</div>
-    <div class="input-group">
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center;">
+      <div><i class="fab fa-google"></i> <strong>Google Sheets Sync</strong> — publish your sheet as CSV (File → Share → Publish to web → CSV)</div>
+      <button class="btn btn-outline" id="templateBtn"><i class="fas fa-download"></i> Download CSV template</button>
+    </div>
+    <div class="input-group" style="margin-top: 1rem;">
       <div class="input-field">
-        <label><i class="fas fa-link"></i> Google Sheets published CSV URL</label>
+        <label><i class="fas fa-link"></i> Google Sheets CSV URL</label>
         <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv" value="">
       </div>
-      <div class="input-field">
-        <label><i class="fas fa-file-csv"></i> Or upload CSV file</label>
-        <label class="file-label" for="csvFile"><i class="fas fa-folder-open"></i> Choose CSV</label>
-        <input type="file" id="csvFile" accept=".csv">
-      </div>
-      <button class="btn btn-primary" id="loadDataBtn"><i class="fas fa-sync-alt"></i> Load & auto‑detect</button>
-      <button class="btn btn-outline" id="downloadTemplateBtn"><i class="fas fa-download"></i> Example CSV</button>
+      <button class="btn btn-primary" id="loadSheetBtn"><i class="fas fa-cloud-download-alt"></i> Sync & Auto-detect</button>
+      <button class="btn" id="refreshBtn"><i class="fas fa-redo-alt"></i> Refresh</button>
     </div>
-    <div class="status-msg" id="dataStatus">
-      <i class="fas fa-info-circle"></i> No data loaded yet. Use default demo gamemodes (Spearmace, MaceCart, Modern, DSMP Mace, NethSMP).<br>
-      💡 <strong>Auto‑detection:</strong> Columns like "Gamemode/Name", "Tier/Rank", "Winrate/WR", "Score/Rating" are recognized automatically.
+    <div class="status-msg" id="syncStatus">
+      <i class="fas fa-info-circle"></i> No sheet loaded. Use default demo data. Provide a CSV with columns: Player, Gamemode, Tier, Region, Points, Placement (auto-detected).
     </div>
   </div>
 
-  <!-- Gamemode cards grid (dynamic) -->
-  <div id="gamemodeGrid" class="gamemode-grid">
-    <!-- will be filled by js -->
+  <!-- Gamemode Tabs -->
+  <div class="gamemode-nav" id="gamemodeTabs"></div>
+
+  <!-- Leaderboard display -->
+  <div class="leaderboard-container">
+    <div id="leaderboardContent">
+      <div class="empty-state">Loading leaderboards...</div>
+    </div>
   </div>
 
-  <!-- Discord bot integration panel (linked to same data) -->
+  <!-- Discord bot panel (linked to same data) -->
   <div class="bot-panel">
-    <div class="bot-header">
-      <div class="bot-icon"><i class="fab fa-discord"></i></div>
-      <div>
-        <div class="bot-title" style="font-weight: 700; font-size: 1.3rem;">MCTiers Discord Bot</div>
-        <div style="font-size: 0.75rem; opacity: 0.8;">Google Sheets backend · real‑time sync</div>
-      </div>
-      <div class="bot-status" style="background:#2b732b; padding:0.2rem 0.9rem; border-radius:30px; font-size:0.7rem;"><i class="fas fa-circle" style="font-size:0.5rem;"></i> ONLINE · SHEET CONNECTED</div>
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+      <div style="background:#5865F2; width:48px; height:48px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-size:1.8rem;"><i class="fab fa-discord"></i></div>
+      <div><strong style="font-size:1.2rem;">MCTiers Discord Bot</strong><br>Live data from the same Google Sheet</div>
+      <div style="margin-left: auto; background:#2b732b; padding:0.2rem 0.9rem; border-radius:30px; font-size:0.7rem;"><i class="fas fa-circle"></i> ACTIVE · SHEET SYNC</div>
     </div>
-    <p><i class="fas fa-chart-simple"></i> The bot pulls rankings directly from the same Google Sheet / CSV source. Any update to the sheet → bot reflects new tiers & winrates on Discord.</p>
-    <div class="bot-actions">
-      <button class="btn btn-primary" id="botSyncSheetBtn"><i class="fab fa-discord"></i> Simulate bot sync (fetch current data)</button>
-      <button class="btn btn-outline" id="botInviteBtn"><i class="fas fa-plus-circle"></i> Invite bot (demo)</button>
-      <button class="btn" id="botCommandBtn"><i class="fas fa-terminal"></i> /tier leaderboard</button>
+    <div class="bot-actions" style="display:flex; gap:1rem; margin:1rem 0; flex-wrap:wrap;">
+      <button class="btn btn-primary" id="botSyncBtn"><i class="fab fa-discord"></i> Simulate bot sync</button>
+      <button class="btn btn-outline" id="botInviteBtn"><i class="fas fa-plus-circle"></i> Invite bot</button>
+      <button class="btn" id="botCmdBtn"><i class="fas fa-terminal"></i> /top players</button>
     </div>
-    <div class="log-area" id="botLog">
-      <i class="fab fa-discord"></i> [BOT] Waiting for data source. The bot is configured to read from the active CSV/Sheet. Use "Load & auto‑detect" first.
+    <div class="status-msg" id="botLogMsg" style="background:#111113;">
+      <i class="fab fa-discord"></i> [BOT] Waiting for data. The bot will reflect player rankings, tiers & placements from the sheet.
     </div>
     <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
-      <div class="server-ip"><i class="fas fa-server"></i> PVP SERVER IP: <strong>mcpvp.club</strong> <button id="copyIpBtn" style="background:none; border:none; color:#b9c3ff; cursor:pointer;"><i class="far fa-copy"></i></button></div>
+      <div style="background:#1b1b1e; border-radius:60px; padding:0.4rem 1.2rem;"><i class="fas fa-server"></i> PVP SERVER IP: <strong>mcpvp.club</strong> <button id="copyIpBtn" style="background:none; border:none; color:#b9c3ff; cursor:pointer;"><i class="far fa-copy"></i></button></div>
     </div>
   </div>
   <div class="footer">
-    <span><i class="fas fa-trophy"></i> MCTiers · auto‑detect columns</span>
-    <span><i class="fab fa-google"></i> Google Sheets + Discord bot linked</span>
-    <span><i class="fas fa-chart-line"></i> Dynamic tiers / winrates</span>
+    <span><i class="fas fa-trophy"></i> Auto-detects columns: Player, Gamemode, Tier, Region, Points, Placement</span>
+    <span><i class="fab fa-google"></i> Sheet updates → Website updates instantly</span>
   </div>
 </div>
 
 <script>
-  // ---------- AUTO-DETECTION & CSV HANDLING ----------
-  let currentGamemodes = []; // stores objects: { name, tier, winrate, score, description? }
+  // ---------- DATA MODEL ----------
+  let rawPlayers = [];     // each object: {player, gamemode, tier, region, points, placement}
+  const GAMEMODES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
+  let currentGamemode = GAMEMODES[0];
 
-  // Default demo dataset (the requested gamemodes)
-  const defaultGamemodes = [
-    { name: "Spearmace", tier: "S", winrate: "74.2%", score: "9.6", desc: "Spear + mace hybrid combat, high range & crits." },
-    { name: "MaceCart", tier: "A", winrate: "68.5%", score: "8.4", desc: "Minecart mace duels with momentum strikes." },
-    { name: "Modern", tier: "S", winrate: "78.9%", score: "9.8", desc: "Crossbows, crystals, axes — latest PVP evolution." },
-    { name: "DSMP Mace", tier: "B+", winrate: "61.3%", score: "7.1", desc: "Dream SMP style roleplay-mace clashes." },
-    { name: "NethSMP", tier: "A+", winrate: "71.2%", score: "8.9", desc: "Nether-exclusive survival PVP, lava mace plays." }
-  ];
-
-  // Helper: render cards from currentGamemodes
-  function renderCards() {
-    const grid = document.getElementById('gamemodeGrid');
-    if (!grid) return;
-    if (!currentGamemodes.length) {
-      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;">⚠️ No gamemodes loaded. Upload CSV or use default demo.</div>`;
-      return;
-    }
-    grid.innerHTML = currentGamemodes.map(gm => {
-      // tier class mapping
-      let tierClass = "tier-A";
-      const rawTier = gm.tier.toString().toUpperCase();
-      if (rawTier === "S") tierClass = "tier-S";
-      else if (rawTier === "S+") tierClass = "tier-Splus";
-      else if (rawTier === "A") tierClass = "tier-A";
-      else if (rawTier === "A+") tierClass = "tier-Aplus";
-      else if (rawTier === "B+" || rawTier === "BPLUS") tierClass = "tier-Bplus";
-      else if (rawTier === "B") tierClass = "tier-B";
-      
-      const win = gm.winrate || "—";
-      const scoreVal = gm.score || "—";
-      const descText = gm.desc || `${gm.name} competitive PVP meta.`;
-      
-      return `
-        <div class="tier-card">
-          <div class="card-header">
-            <span class="gamemode-name"><i class="fas fa-skull-crossbones"></i> ${escapeHtml(gm.name)}</span>
-            <span class="tier-badge ${tierClass}">${escapeHtml(gm.tier)}</span>
-          </div>
-          <div class="desc">${escapeHtml(descText)}</div>
-          <div class="stat-line"><span><i class="fas fa-chart-line"></i> Winrate</span><span class="stat-value">${escapeHtml(win)}</span></div>
-          <div class="stat-line"><span><i class="fas fa-robot"></i> Bot score</span><span class="stat-value">${escapeHtml(scoreVal)}</span></div>
-        </div>
-      `;
-    }).join('');
+  // Helper: show toast
+  function showToast(msg, isErr = false) {
+    let t = document.querySelector('.toast');
+    if(t) t.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fas ${isErr ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${msg}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
   }
 
-  function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-  // Auto-detect column mapping from headers
-  function detectColumnMapping(headers) {
-    const lowerHeaders = headers.map(h => h.toLowerCase().trim());
-    let nameIdx = -1, tierIdx = -1, winrateIdx = -1, scoreIdx = -1;
-    for (let i = 0; i < lowerHeaders.length; i++) {
-      const h = lowerHeaders[i];
-      if (h.includes('gamemode') || h === 'name' || h === 'mode' || h === 'game mode') nameIdx = i;
-      if (h.includes('tier') || h === 'rank' || h === 'rating tier') tierIdx = i;
-      if (h.includes('winrate') || h.includes('win rate') || h === 'wr' || h.includes('win %')) winrateIdx = i;
-      if (h.includes('score') || h.includes('rating') || h.includes('bot score') || h === 'points') scoreIdx = i;
-    }
-    // fallback: if name not found, assume first col is name
-    if (nameIdx === -1 && headers.length > 0) nameIdx = 0;
-    if (tierIdx === -1 && headers.length > 1) tierIdx = 1;
-    if (winrateIdx === -1 && headers.length > 2) winrateIdx = 2;
-    if (scoreIdx === -1 && headers.length > 3) scoreIdx = 3;
-    return { nameIdx, tierIdx, winrateIdx, scoreIdx };
+  // Default demo data (showcase Spearmace, MaceCart, Modern, DSMP Mace, NethSMP with players)
+  function getDefaultPlayers() {
+    return [
+      { player: "xNestorio", gamemode: "Spearmace", tier: "S", region: "NA", points: 2840, placement: 1 },
+      { player: "Clownpierce", gamemode: "Spearmace", tier: "A+", region: "EU", points: 2560, placement: 2 },
+      { player: "Couriway", gamemode: "Spearmace", tier: "A", region: "NA", points: 2310, placement: 3 },
+      { player: "Fruitberries", gamemode: "MaceCart", tier: "S", region: "OCE", points: 2980, placement: 1 },
+      { player: "Purpled", gamemode: "MaceCart", tier: "A+", region: "NA", points: 2730, placement: 2 },
+      { player: "Hannahxxrose", gamemode: "MaceCart", tier: "B+", region: "EU", points: 2150, placement: 3 },
+      { player: "Technoblade", gamemode: "Modern", tier: "S+", region: "NA", points: 3120, placement: 1 },
+      { player: "Dream", gamemode: "Modern", tier: "S", region: "NA", points: 2890, placement: 2 },
+      { player: "Sapnap", gamemode: "Modern", tier: "A+", region: "NA", points: 2710, placement: 3 },
+      { player: "TommyInnit", gamemode: "DSMP Mace", tier: "B+", region: "EU", points: 1890, placement: 1 },
+      { player: "Tubbo", gamemode: "DSMP Mace", tier: "B", region: "EU", points: 1740, placement: 2 },
+      { player: "Ranboo", gamemode: "DSMP Mace", tier: "C+", region: "NA", points: 1520, placement: 3 },
+      { player: "Fundy", gamemode: "NethSMP", tier: "A", region: "EU", points: 2430, placement: 1 },
+      { player: "Philza", gamemode: "NethSMP", tier: "A+", region: "EU", points: 2670, placement: 2 },
+      { player: "WilburSoot", gamemode: "NethSMP", tier: "B+", region: "EU", points: 2010, placement: 3 }
+    ];
   }
 
-  // Parse CSV data (array of arrays) into gamemodes
-  function parseCSVToGamemodes(dataRows, headers) {
-    if (!dataRows || dataRows.length === 0) return [];
-    const mapping = detectColumnMapping(headers);
-    const gamemodes = [];
-    for (let row of dataRows) {
+  // Load default into rawPlayers
+  function loadDefaultData() {
+    rawPlayers = getDefaultPlayers();
+    document.getElementById('syncStatus').innerHTML = `<i class="fas fa-database"></i> Using demo data (Spearmace, MaceCart, Modern, DSMP Mace, NethSMP). Provide a Google Sheet CSV to auto-update.`;
+    renderTabsAndLeaderboard();
+    updateBotLog();
+  }
+
+  // Auto-detect column mapping from CSV headers
+  function detectColumns(headers) {
+    let map = { player: -1, gamemode: -1, tier: -1, region: -1, points: -1, placement: -1 };
+    for (let i = 0; i < headers.length; i++) {
+      let h = headers[i].toLowerCase().trim();
+      if (h.includes('player') || h === 'name' || h === 'ign') map.player = i;
+      if (h.includes('gamemode') || h === 'mode' || h === 'game mode') map.gamemode = i;
+      if (h.includes('tier') || h === 'rank') map.tier = i;
+      if (h.includes('region') || h === 'reg') map.region = i;
+      if (h.includes('point') || h === 'points' || h === 'score') map.points = i;
+      if (h.includes('placement') || h === 'place' || h === 'pos') map.placement = i;
+    }
+    // fallback heuristics
+    if (map.player === -1 && headers.length > 0) map.player = 0;
+    if (map.gamemode === -1 && headers.length > 1) map.gamemode = 1;
+    if (map.tier === -1 && headers.length > 2) map.tier = 2;
+    if (map.region === -1 && headers.length > 3) map.region = 3;
+    if (map.points === -1 && headers.length > 4) map.points = 4;
+    if (map.placement === -1 && headers.length > 5) map.placement = 5;
+    return map;
+  }
+
+  // Parse CSV rows into player objects
+  function parseCSVToPlayers(rows, headers) {
+    const mapping = detectColumns(headers);
+    const players = [];
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
       if (!row || row.length === 0) continue;
-      let name = (mapping.nameIdx !== -1 && row[mapping.nameIdx]) ? row[mapping.nameIdx].trim() : null;
-      if (!name || name === "") continue;
-      let tier = (mapping.tierIdx !== -1 && row[mapping.tierIdx]) ? row[mapping.tierIdx].trim() : "?";
-      let winrate = (mapping.winrateIdx !== -1 && row[mapping.winrateIdx]) ? row[mapping.winrateIdx].trim() : "?";
-      let score = (mapping.scoreIdx !== -1 && row[mapping.scoreIdx]) ? row[mapping.scoreIdx].trim() : "?";
-      // optional description: if extra column exists we can set generic
-      let desc = `${name} — auto-detected from sheet. Tier ${tier}, win ${winrate}`;
-      gamemodes.push({ name, tier, winrate, score, desc });
+      const player = mapping.player !== -1 ? (row[mapping.player] || "").trim() : null;
+      if (!player) continue;
+      let gamemode = mapping.gamemode !== -1 ? (row[mapping.gamemode] || "").trim() : null;
+      if (!gamemode) continue;
+      // normalize gamemode to match our GAMEMODES (case-insensitive)
+      let matchedGm = GAMEMODES.find(g => g.toLowerCase() === gamemode.toLowerCase());
+      if (!matchedGm) continue; // skip unknown gamemodes
+      let tier = mapping.tier !== -1 ? (row[mapping.tier] || "").trim() : "?";
+      let region = mapping.region !== -1 ? (row[mapping.region] || "").trim() : "?";
+      let points = mapping.points !== -1 ? parseFloat(row[mapping.points]) : 0;
+      if (isNaN(points)) points = 0;
+      let placement = mapping.placement !== -1 ? parseInt(row[mapping.placement]) : 999;
+      if (isNaN(placement)) placement = 999;
+      players.push({ player, gamemode: matchedGm, tier, region, points, placement });
     }
-    return gamemodes;
+    return players;
   }
 
-  // load from CSV text
-  function loadFromCSVText(csvString, sourceName = "CSV") {
-    Papa.parse(csvString, {
-      header: false,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const rows = results.data;
-        if (rows.length < 2) {
-          document.getElementById('dataStatus').innerHTML = `<i class="fas fa-exclamation-triangle"></i> CSV has insufficient rows (need headers + data). Using default data.`;
-          loadDefaultData();
-          return;
-        }
-        const headers = rows[0].map(cell => (cell ? cell.trim() : `col${Math.random()}`));
-        const dataRows = rows.slice(1);
-        const gamemodes = parseCSVToGamemodes(dataRows, headers);
-        if (gamemodes.length === 0) {
-          document.getElementById('dataStatus').innerHTML = `<i class="fas fa-ban"></i> No valid gamemodes detected from ${sourceName}. Using default.`;
-          loadDefaultData();
-        } else {
-          currentGamemodes = gamemodes;
-          renderCards();
-          document.getElementById('dataStatus').innerHTML = `<i class="fas fa-check-circle"></i> ✅ Loaded ${gamemodes.length} gamemodes from ${sourceName}. Auto-detected columns: name, tier, winrate, score.`;
-          updateBotLogWithCurrentData();
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        document.getElementById('dataStatus').innerHTML = `<i class="fas fa-times-circle"></i> Error parsing CSV: ${err.message}. Using default.`;
-        loadDefaultData();
-      }
-    });
-  }
-
-  // load from URL (Google Sheets CSV)
-  function loadFromUrl(url) {
+  // Fetch CSV from URL and update
+  function syncFromGoogleSheet(url) {
     if (!url || !url.trim()) {
-      document.getElementById('dataStatus').innerHTML = `<i class="fas fa-link"></i> Please enter a valid Google Sheets CSV URL.`;
+      showToast("Please enter a valid Google Sheets CSV URL", true);
       return false;
     }
-    document.getElementById('dataStatus').innerHTML = `<i class="fas fa-spinner fa-pulse"></i> Fetching from URL...`;
+    document.getElementById('syncStatus').innerHTML = `<i class="fas fa-spinner fa-pulse"></i> Fetching from ${url} ...`;
     fetch(url, { cache: "no-store" })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();
       })
       .then(csvText => {
-        loadFromCSVText(csvText, "Google Sheet URL");
+        Papa.parse(csvText, {
+          header: false,
+          skipEmptyLines: true,
+          complete: (results) => {
+            const rows = results.data;
+            if (rows.length < 2) throw new Error("CSV has insufficient rows");
+            const headers = rows[0].map(cell => (cell ? cell.trim() : ""));
+            const dataRows = rows.slice(1);
+            const players = parseCSVToPlayers(dataRows, headers);
+            if (players.length === 0) {
+              document.getElementById('syncStatus').innerHTML = `<i class="fas fa-exclamation-triangle"></i> No valid players found in CSV. Ensure columns: Player, Gamemode (${GAMEMODES.join(', ')}), Tier, Region, Points, Placement. Using demo.`;
+              loadDefaultData();
+            } else {
+              rawPlayers = players;
+              document.getElementById('syncStatus').innerHTML = `<i class="fas fa-check-circle"></i> Loaded ${players.length} players from Google Sheet. Auto-detected columns.`;
+              renderTabsAndLeaderboard();
+              updateBotLog();
+              showToast(`✅ Synced ${players.length} players from sheet`);
+            }
+          },
+          error: (err) => {
+            throw err;
+          }
+        });
       })
       .catch(err => {
-        document.getElementById('dataStatus').innerHTML = `<i class="fas fa-exclamation-triangle"></i> Failed to fetch URL: ${err.message}. Check CORS / publish CSV correctly. Using default.`;
+        console.error(err);
+        document.getElementById('syncStatus').innerHTML = `<i class="fas fa-times-circle"></i> Error: ${err.message}. Using default demo.`;
         loadDefaultData();
+        showToast("Failed to load CSV, using demo data", true);
       });
     return true;
   }
 
-  // Load default demo
-  function loadDefaultData() {
-    currentGamemodes = [...defaultGamemodes];
-    renderCards();
-    const statusDiv = document.getElementById('dataStatus');
-    if (statusDiv && !statusDiv.innerHTML.includes("Using default")) {
-      statusDiv.innerHTML = `<i class="fas fa-database"></i> Using default demo gamemodes (Spearmace, MaceCart, Modern, DSMP Mace, NethSMP). Upload CSV or Google Sheet URL to override.`;
-    } else if (statusDiv) {
-      statusDiv.innerHTML = `<i class="fas fa-info-circle"></i> Default demo active. Provide a CSV with columns: Gamemode, Tier, Winrate, Score.`;
+  // Render gamemode tabs and leaderboard for current tab
+  function renderTabsAndLeaderboard() {
+    const tabsContainer = document.getElementById('gamemodeTabs');
+    tabsContainer.innerHTML = '';
+    GAMEMODES.forEach(gm => {
+      const btn = document.createElement('button');
+      btn.innerText = gm;
+      btn.className = `gm-tab ${currentGamemode === gm ? 'active' : ''}`;
+      btn.addEventListener('click', () => {
+        currentGamemode = gm;
+        renderTabsAndLeaderboard();
+      });
+      tabsContainer.appendChild(btn);
+    });
+    renderLeaderboard();
+  }
+
+  function renderLeaderboard() {
+    const container = document.getElementById('leaderboardContent');
+    const playersForMode = rawPlayers.filter(p => p.gamemode === currentGamemode);
+    if (playersForMode.length === 0) {
+      container.innerHTML = `<div class="empty-state"><i class="fas fa-users-slash"></i> No players ranked in ${currentGamemode} yet. Add entries to Google Sheet.</div>`;
+      return;
     }
-    updateBotLogWithCurrentData();
+    // sort by placement (ascending), then by points descending as fallback
+    const sorted = [...playersForMode].sort((a,b) => {
+      if (a.placement !== b.placement) return a.placement - b.placement;
+      return b.points - a.points;
+    });
+    const table = document.createElement('table');
+    table.className = 'leaderboard-table';
+    table.innerHTML = `
+      <thead>
+        <tr><th>#</th><th>Player</th><th>Tier</th><th>Region</th><th>Points</th><th>Placement</th></tr>
+      </thead>
+      <tbody id="leaderboardBody"></tbody>
+    `;
+    const tbody = table.querySelector('#leaderboardBody');
+    sorted.forEach((p, idx) => {
+      const rank = idx + 1;
+      let tierClass = '';
+      if (p.tier.toUpperCase().includes('S')) tierClass = 'tier-S';
+      else if (p.tier.toUpperCase().includes('A')) tierClass = 'tier-A';
+      else tierClass = 'tier-B';
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="rank-col">${rank}</td>
+        <td><strong>${escapeHtml(p.player)}</strong></td>
+        <td><span class="tier-badge ${tierClass}">${escapeHtml(p.tier)}</span></td>
+        <td><span class="region">${escapeHtml(p.region)}</span></td>
+        <td class="points">${p.points.toLocaleString()}</td>
+        <td>${p.placement === 999 ? '—' : p.placement}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    container.innerHTML = '';
+    container.appendChild(table);
   }
 
-  function updateBotLogWithCurrentData() {
-    const count = currentGamemodes.length;
-    const logDiv = document.getElementById('botLog');
-    if (logDiv) {
-      logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] ✅ Active data source: ${count} gamemodes loaded. Bot would respond with live tiers from this sheet.<br>
-      🧪 Try <strong>/tier list</strong> → shows current rankings. Any update to Google Sheet → bot auto-syncs.<br>
-      📊 Current top: ${currentGamemodes[0]?.name || "N/A"} (${currentGamemodes[0]?.tier || "?"})`;
-    }
+  function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+  // Discord bot panel updates (mirror current data)
+  function updateBotLog() {
+    const total = rawPlayers.length;
+    const distinctGms = new Set(rawPlayers.map(p => p.gamemode)).size;
+    const topPlayers = rawPlayers.filter(p => p.gamemode === currentGamemode).sort((a,b)=>a.placement-b.placement).slice(0,3);
+    let topText = topPlayers.map(p=>`${p.player} (${p.tier})`).join(', ') || 'none';
+    const logDiv = document.getElementById('botLogMsg');
+    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] 📊 Active sheet data: ${total} total players across ${distinctGms} gamemodes.<br>
+    🎯 Current leaderboard for ${currentGamemode}: Top 3 → ${topText}<br>
+    🤖 Bot commands: /top, /tier, /region — all pull live from Google Sheet.`;
   }
 
-  // Handle file upload
-  function handleFile(file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      loadFromCSVText(e.target.result, file.name);
-    };
-    reader.onerror = () => {
-      document.getElementById('dataStatus').innerHTML = `<i class="fas fa-times"></i> File read error. Using default.`;
-      loadDefaultData();
-    };
-    reader.readAsText(file);
+  // Simulate bot interactions
+  function botSync() {
+    if (rawPlayers.length === 0) { showToast("No data loaded, use demo or sync sheet first."); return; }
+    showToast(`🤖 Bot synced: ${rawPlayers.length} players, latest rankings from sheet.`);
+    updateBotLog();
   }
+  function botInvite() {
+    showToast("🔗 MCTiers Bot invite: https://discord.com/oauth2/example (real bot would use same Google Sheet)");
+    const logDiv = document.getElementById('botLogMsg');
+    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] Invite link generated. The bot will have read access to your Google Sheet CSV and auto-update rankings.`;
+  }
+  function botTopCommand() {
+    if (rawPlayers.length === 0) { showToast("No players loaded."); return; }
+    const topAll = [...rawPlayers].sort((a,b)=>b.points - a.points).slice(0,5);
+    const msg = topAll.map((p,i)=>`${i+1}. ${p.player} (${p.gamemode}) ${p.points}pts`).join('\n');
+    const logDiv = document.getElementById('botLogMsg');
+    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] \`/top players\`\n\`\`\`\n${msg}\n\`\`\`\nData source: Google Sheet (live)`;
+    showToast(`🏆 Top player: ${topAll[0]?.player} with ${topAll[0]?.points} points`);
+  }
+  function copyServerIp() { navigator.clipboard.writeText("mcpvp.club"); showToast("✅ Copied server IP: mcpvp.club"); }
 
-  // Download example CSV template (with the requested gamemodes)
+  // Download CSV template with columns + example rows for the 5 gamemodes
   function downloadTemplate() {
-    const headers = ["Gamemode", "Tier", "Winrate", "BotScore"];
+    const headers = ["Player", "Gamemode", "Tier", "Region", "Points", "Placement"];
     const rows = [
-      ["Spearmace", "S", "74.2%", "9.6"],
-      ["MaceCart", "A", "68.5%", "8.4"],
-      ["Modern", "S", "78.9%", "9.8"],
-      ["DSMP Mace", "B+", "61.3%", "7.1"],
-      ["NethSMP", "A+", "71.2%", "8.9"]
+      ["xNestorio", "Spearmace", "S", "NA", "2840", "1"],
+      ["Clownpierce", "Spearmace", "A+", "EU", "2560", "2"],
+      ["Fruitberries", "MaceCart", "S", "OCE", "2980", "1"],
+      ["Technoblade", "Modern", "S+", "NA", "3120", "1"],
+      ["TommyInnit", "DSMP Mace", "B+", "EU", "1890", "1"],
+      ["Fundy", "NethSMP", "A", "EU", "2430", "1"],
+      ["Purpled", "MaceCart", "A+", "NA", "2730", "2"],
+      ["Dream", "Modern", "S", "NA", "2890", "2"]
     ];
     const csvContent = [headers, ...rows].map(row => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "mctiers_template.csv";
+    link.download = "mctiers_sheet_template.csv";
     link.click();
     URL.revokeObjectURL(link.href);
-    showToast("📁 Template CSV downloaded — edit and re-upload");
+    showToast("📥 Template downloaded — add your players and publish as CSV");
   }
 
-  function showToast(msg) {
-    let existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-  }
-
-  // BOT PANEL INTERACTIONS (simulate but reflect current data)
-  function botSync() {
-    if (currentGamemodes.length) {
-      const randomGm = currentGamemodes[Math.floor(Math.random() * currentGamemodes.length)];
-      showToast(`🤖 Bot sync: pulled ${currentGamemodes.length} entries from sheet. Top: ${randomGm.name} tier ${randomGm.tier}`);
-      const logDiv = document.getElementById('botLog');
-      logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] 🔄 Sync command executed. Rankings refreshed from Google Sheet / CSV.<br>
-      🎯 Current meta: ${currentGamemodes.slice(0,3).map(g=>`${g.name} (${g.tier})`).join(', ')}<br>
-      ✅ Discord bot now mirrors this exact dataset.`;
-    } else {
-      showToast("No gamemodes loaded, use default or upload CSV first.");
-    }
-  }
-  function botInviteDemo() {
-    showToast("🤖 MCTiers Bot invite URL (demo): https://discord.com/oauth2/example — real bot would use same Google Sheet.");
-    const logDiv = document.getElementById('botLog');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] Invite link generated. The bot will have read access to your published Google Sheet CSV and auto-update rankings in Discord channels.`;
-  }
-  function botCommandDemo() {
-    if (currentGamemodes.length) {
-      const leaderboard = currentGamemodes.slice(0,5).map((g,i)=>`${i+1}. ${g.name} [${g.tier}] ${g.winrate}`).join('\n');
-      showToast(`🏆 /tier leaderboard: top tier ${currentGamemodes[0].name}`);
-      const logDiv = document.getElementById('botLog');
-      logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] \`/tier leaderboard\`\n\`\`\`\n${leaderboard}\n\`\`\`\nBot uses live sheet data.`;
-    } else {
-      showToast("No data, load CSV first.");
-    }
-  }
-  function copyServerIp() {
-    navigator.clipboard.writeText("mcpvp.club");
-    showToast("✅ Server IP copied: mcpvp.club");
-  }
-
-  // event binding
+  // Event listeners + initial load
   document.addEventListener('DOMContentLoaded', () => {
-    loadDefaultData(); // initial demo
-
-    document.getElementById('loadDataBtn').addEventListener('click', () => {
+    loadDefaultData();
+    document.getElementById('loadSheetBtn').addEventListener('click', () => {
       const url = document.getElementById('sheetUrl').value.trim();
-      const fileInput = document.getElementById('csvFile');
-      if (url) {
-        loadFromUrl(url);
-      } else if (fileInput.files.length > 0) {
-        handleFile(fileInput.files[0]);
-      } else {
-        showToast("Please provide a Google Sheets CSV URL or select a CSV file.");
-        document.getElementById('dataStatus').innerHTML = `<i class="fas fa-question-circle"></i> No source provided. Using default gamemodes.`;
-        loadDefaultData();
-      }
+      if (url) syncFromGoogleSheet(url);
+      else showToast("Please paste a Google Sheets CSV URL", true);
     });
-    document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
-    document.getElementById('botSyncSheetBtn').addEventListener('click', botSync);
-    document.getElementById('botInviteBtn').addEventListener('click', botInviteDemo);
-    document.getElementById('botCommandBtn').addEventListener('click', botCommandDemo);
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      if (rawPlayers.length && rawPlayers !== getDefaultPlayers()) {
+        const url = document.getElementById('sheetUrl').value.trim();
+        if (url) syncFromGoogleSheet(url);
+        else { renderTabsAndLeaderboard(); showToast("Refreshed current data"); }
+      } else { renderTabsAndLeaderboard(); showToast("Reloaded demo data"); }
+      updateBotLog();
+    });
+    document.getElementById('templateBtn').addEventListener('click', downloadTemplate);
+    document.getElementById('botSyncBtn').addEventListener('click', botSync);
+    document.getElementById('botInviteBtn').addEventListener('click', botInvite);
+    document.getElementById('botCmdBtn').addEventListener('click', botTopCommand);
     document.getElementById('copyIpBtn').addEventListener('click', copyServerIp);
-    // optional file input visual
-    document.getElementById('csvFile').addEventListener('change', (e) => {
-      if(e.target.files.length) showToast(`Selected: ${e.target.files[0].name}`);
-    });
   });
 </script>
 </body>
