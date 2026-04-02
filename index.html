@@ -1,537 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>MCTiers · Elite PVP Gamemodes</title>
-  <!-- Google Fonts + Font Awesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CritTiers</title>
 
-    body {
-      background: #2c2c2e;   /* deep gray background as requested */
-      font-family: 'Inter', sans-serif;
-      color: #f0f3f8;
-      line-height: 1.4;
-      padding: 2rem 1.5rem;
-    }
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #808080;
+    color: white;
+}
 
-    /* main container - mctiers inspired layout */
-    .container {
-      max-width: 1300px;
-      margin: 0 auto;
-    }
+/* Top bar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
 
-    /* header / branding */
-    .hero {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-    .hero h1 {
-      font-size: 3.2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #FFFFFF 0%, #c0c9dd 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .hero .badge {
-      display: inline-block;
-      background: rgba(255,255,240,0.08);
-      backdrop-filter: blur(4px);
-      padding: 0.35rem 1.2rem;
-      border-radius: 60px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-top: 0.75rem;
-      border: 1px solid rgba(255,255,200,0.2);
-    }
-    .hero p {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-      color: #bcbfcf;
-      max-width: 650px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+/* Left side */
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    /* grid gamemodes — like mctiers card grid */
-    .gamemode-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.8rem;
-      margin: 2.5rem 0 3rem;
-    }
+.left img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+}
 
-    /* card design */
-    .tier-card {
-      background: #1f1f22;
-      border-radius: 2rem;
-      padding: 1.6rem 1.4rem 1.8rem 1.4rem;
-      transition: transform 0.2s ease, box-shadow 0.2s;
-      box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255,255,245,0.08);
-      backdrop-filter: blur(2px);
-    }
-    .tier-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 30px -12px black;
-      border-color: rgba(255,215,0,0.3);
-    }
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .gamemode-name {
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      background: linear-gradient(145deg, #fff, #cfd6ee);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .tier-badge {
-      font-weight: 800;
-      font-size: 1.5rem;
-      background: #2a2a30;
-      padding: 0.2rem 0.8rem;
-      border-radius: 50px;
-      display: inline-block;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 5px rgba(0,0,0,0.2);
-    }
-    /* tier colors */
-    .tier-S { color: #FFD966; text-shadow: 0 0 3px #ffb347; }
-    .tier-Splus { color: #F4C542; text-shadow: 0 0 4px #ffaa33; }
-    .tier-A { color: #A8E6CF; }
-    .tier-Aplus { color: #B8F2D6; }
-    .tier-Bplus { color: #9BB8E0; }
-    .tier-B { color: #CDB4DB; }
+.title {
+    font-size: 26px;
+    font-weight: bold;
+}
 
-    .desc {
-      font-size: 0.9rem;
-      color: #b9bfdb;
-      margin: 0.9rem 0 1rem;
-      line-height: 1.45;
-    }
-    .stat-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      border-top: 1px dashed rgba(255,255,255,0.1);
-      margin-top: 0.8rem;
-      padding-top: 0.8rem;
-      font-size: 0.8rem;
-      font-weight: 500;
-    }
-    .stat-value {
-      color: #ffd966;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-    .meta-icon {
-      margin-right: 6px;
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
+/* Right side */
+.right {
+    text-align: right;
+}
 
-    /* discord bot integration panel — like mctiers but bot-centric */
-    .bot-panel {
-      background: #232326;
-      border-radius: 2rem;
-      padding: 1.8rem 2rem;
-      margin: 2rem 0 2rem;
-      border: 1px solid rgba(88, 101, 242, 0.3);
-      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.4);
-      transition: all 0.2s;
-    }
-    .bot-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-    }
-    .bot-icon {
-      background: #5865F2;
-      width: 48px;
-      height: 48px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      box-shadow: 0 0 0 2px #2c2c2e, 0 0 0 4px #5865f2;
-    }
-    .bot-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    .bot-status {
-      background: #2b732b;
-      padding: 0.2rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-    .bot-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin: 1.5rem 0 1rem;
-      align-items: center;
-    }
-    .btn {
-      background: #3a3a40;
-      border: none;
-      padding: 0.7rem 1.6rem;
-      border-radius: 40px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      color: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-    }
-    .btn-primary {
-      background: #5865F2;
-      box-shadow: 0 4px 10px rgba(88,101,242,0.3);
-    }
-    .btn-primary:hover {
-      background: #4752c4;
-      transform: scale(0.97);
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #5865f2;
-    }
-    .btn-outline:hover {
-      background: rgba(88,101,242,0.2);
-    }
-    .log-area {
-      background: #111113;
-      border-radius: 1.2rem;
-      padding: 1rem;
-      margin-top: 1.3rem;
-      font-family: monospace;
-      font-size: 0.85rem;
-      border-left: 4px solid #5865f2;
-      color: #bcc4f0;
-    }
-    .server-ip {
-      background: #1b1b1e;
-      border-radius: 60px;
-      padding: 0.3rem 1.2rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 500;
-    }
-    .footer {
-      margin-top: 3rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #8f95b0;
-      border-top: 1px solid #333338;
-      padding-top: 2rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    i {
-      margin-right: 6px;
-    }
-    @media (max-width: 650px) {
-      body { padding: 1.5rem 1rem; }
-      .hero h1 { font-size: 2.2rem; }
-      .gamemode-name { font-size: 1.5rem; }
-    }
-    .toast-msg {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e1e24;
-      backdrop-filter: blur(12px);
-      border-radius: 40px;
-      padding: 10px 22px;
-      color: #f0f0f0;
-      font-weight: 500;
-      z-index: 999;
-      border-left: 5px solid #5865f2;
-      box-shadow: 0 6px 18px black;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      font-size: 0.85rem;
-    }
-    button:active { transform: scale(0.97); }
-  </style>
+.search {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+}
+
+.discord-btn {
+    margin-top: 8px;
+    padding: 8px 15px;
+    background: #5865F2;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+}
+
+.discord-btn:hover {
+    background: #4752c4;
+}
+
+.server-ip {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.tab {
+    padding: 10px 20px;
+    background: #444;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: #222;
+}
+</style>
 </head>
+
 <body>
-<div class="container">
-  <!-- hero section mctiers style -->
-  <div class="hero">
-    <h1><i class="fas fa-shield-halbed"></i> MCTiers · ELITE RANKINGS</h1>
-    <div class="badge"><i class="fas fa-crosshairs"></i> PVP META · DISCORD POWERED</div>
-    <p>Community-driven tier list for the most competitive Minecraft gamemodes. <br> Data synced live with <strong>MCTiers Bot</strong> — vote, influence rankings & track shifts.</p>
-  </div>
 
-  <!-- GAMEMODES GRID: Spearmace · MaceCart · Modern · DSMP Mace · NethSMP -->
-  <div class="gamemode-grid" id="gamemodeGrid">
-    <!-- card 1: Spearmace -->
-    <div class="tier-card" data-gamemode="Spearmace">
-      <div class="card-header">
-        <span class="gamemode-name"><i class="fas fa-gavel"></i> Spearmace</span>
-        <span class="tier-badge tier-S" id="tier-Spearmace">S</span>
-      </div>
-      <div class="desc">Hybrid spear + mace combat, devastating mid-range pokes & heavy crits. Meta-defining pressure.</div>
-      <div class="stat-line"><span><i class="fas fa-chart-line meta-icon"></i> Winrate</span><span class="stat-value" id="wr-Spearmace">74.2%</span></div>
-      <div class="stat-line"><span><i class="fas fa-robot meta-icon"></i> Bot score</span><span class="stat-value" id="botScore-Spearmace">9.6 / 10</span></div>
+<!-- TOP BAR -->
+<div class="topbar">
+    
+    <!-- LEFT -->
+    <div class="left">
+        <img src="https://i.ibb.co/3bHWyM6/image.png" alt="logo">
+        <div class="title">CritTiers</div>
     </div>
-    <!-- card 2: MaceCart -->
-    <div class="tier-card" data-gamemode="MaceCart">
-      <div class="card-header">
-        <span class="gamemode-name"><i class="fas fa-train"></i> MaceCart</span>
-        <span class="tier-badge tier-A" id="tier-MaceCart">A</span>
-      </div>
-      <div class="desc">Minecart mace duels — speed, momentum and explosive impacts. High skill ceiling.</div>
-      <div class="stat-line"><span><i class="fas fa-chart-line meta-icon"></i> Winrate</span><span class="stat-value" id="wr-MaceCart">68.5%</span></div>
-      <div class="stat-line"><span><i class="fas fa-robot meta-icon"></i> Bot score</span><span class="stat-value" id="botScore-MaceCart">8.4 / 10</span></div>
-    </div>
-    <!-- card 3: Modern -->
-    <div class="tier-card" data-gamemode="Modern">
-      <div class="card-header">
-        <span class="gamemode-name"><i class="fas fa-bolt"></i> Modern</span>
-        <span class="tier-badge tier-S" id="tier-Modern">S</span>
-      </div>
-      <div class="desc">Crossbows, crystals, shields & axes — latest PVP evolution. Fast-paced & tactical.</div>
-      <div class="stat-line"><span><i class="fas fa-chart-line meta-icon"></i> Winrate</span><span class="stat-value" id="wr-Modern">78.9%</span></div>
-      <div class="stat-line"><span><i class="fas fa-robot meta-icon"></i> Bot score</span><span class="stat-value" id="botScore-Modern">9.8 / 10</span></div>
-    </div>
-    <!-- card 4: DSMP Mace -->
-    <div class="tier-card" data-gamemode="DSMP Mace">
-      <div class="card-header">
-        <span class="gamemode-name"><i class="fas fa-mask"></i> DSMP Mace</span>
-        <span class="tier-badge tier-Bplus" id="tier-DSMP Mace">B+</span>
-      </div>
-      <div class="desc">Dream SMP style roleplay-mace clashes. Heavy atmosphere and crowd-driven meta.</div>
-      <div class="stat-line"><span><i class="fas fa-chart-line meta-icon"></i> Winrate</span><span class="stat-value" id="wr-DSMP Mace">61.3%</span></div>
-      <div class="stat-line"><span><i class="fas fa-robot meta-icon"></i> Bot score</span><span class="stat-value" id="botScore-DSMP Mace">7.1 / 10</span></div>
-    </div>
-    <!-- card 5: NethSMP -->
-    <div class="tier-card" data-gamemode="NethSMP">
-      <div class="card-header">
-        <span class="gamemode-name"><i class="fas fa-fire"></i> NethSMP</span>
-        <span class="tier-badge tier-Aplus" id="tier-NethSMP">A+</span>
-      </div>
-      <div class="desc">Nether-exclusive survival PVP, striders, fortress fights, and lava mace plays.</div>
-      <div class="stat-line"><span><i class="fas fa-chart-line meta-icon"></i> Winrate</span><span class="stat-value" id="wr-NethSMP">71.2%</span></div>
-      <div class="stat-line"><span><i class="fas fa-robot meta-icon"></i> Bot score</span><span class="stat-value" id="botScore-NethSMP">8.9 / 10</span></div>
-    </div>
-  </div>
 
-  <!-- DISCORD BOT INTEGRATION PANEL (fully linked) -->
-  <div class="bot-panel">
-    <div class="bot-header">
-      <div class="bot-icon"><i class="fab fa-discord"></i></div>
-      <div>
-        <div class="bot-title">MCTiers Discord Bot</div>
-        <div style="font-size: 0.8rem; opacity: 0.8;"><i class="fas fa-link"></i> real-time sync · ranking oracle</div>
-      </div>
-      <div class="bot-status"><i class="fas fa-circle" style="font-size: 0.6rem; color:#2ecc2e;"></i> ONLINE · ACTIVE</div>
-    </div>
-    <p style="margin-bottom: 0.5rem;"><i class="fas fa-code-branch"></i> The bot is directly linked to this website: it provides live tier adjustments, winrate updates, and community votes. Use the commands below or sync fresh data from the bot API.</p>
-    <div class="bot-actions">
-      <button class="btn btn-primary" id="syncBotBtn"><i class="fab fa-discord"></i> Fetch latest data from bot</button>
-      <button class="btn btn-outline" id="inviteBotBtn"><i class="fas fa-plus-circle"></i> Invite bot to server</button>
-      <button class="btn" id="mockCmdBtn"><i class="fas fa-terminal"></i> Test bot command</button>
-    </div>
-    <div class="log-area" id="botLog">
-      <i class="fab fa-discord"></i> [BOT] Awaiting interaction — last sync: <span id="lastSyncTime">never</span><br>
-      💡 Use "Fetch latest data from bot" to simulate live Discord bot API response & update gamemode tiers/winrates.
-    </div>
-    <!-- server ip reference from image but stylized -->
-    <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
-      <div class="server-ip"><i class="fas fa-server"></i> PVP SERVER IP: <strong id="serverIp">mcpvp.club</strong> <button id="copyIpBtn" style="background: none; border: none; color:#b9c3ff; cursor:pointer;"><i class="far fa-copy"></i></button></div>
-    </div>
-  </div>
+    <!-- RIGHT -->
+    <div class="right">
+        <input type="text" class="search" placeholder="Search players...">
 
-  <div class="footer">
-    <span><i class="fas fa-trophy"></i> MCTiers · Gamemode authority</span>
-    <span><i class="fab fa-discord"></i> Discord bot linked — real-time rankings, voting & leaderboards</span>
-    <span><i class="fas fa-chart-simple"></i> Data refreshes via bot API endpoint</span>
-  </div>
+        <br>
+
+        <button class="discord-btn" onclick="joinDiscord()">
+            Join Discord
+        </button>
+
+        <div class="server-ip">
+            Server IP: <strong>CritTiers.xyz</strong>
+        </div>
+    </div>
+
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+    <div class="tab active">Overall</div>
+    <div class="tab">Spearmace</div>
+    <div class="tab">MaceCart</div>
+    <div class="tab">Modern</div>
+    <div class="tab">DSMP Mace</div>
+    <div class="tab">NethSMP</div>
 </div>
 
 <script>
-  // -------- MOCK BOT API (simulating discord bot integration) --------
-  // This shows that the website is fully ready to be linked with a real discord bot.
-  // The bot would normally provide these updated statistics via REST/WebSocket.
-  
-  // Initial data snapshot
-  let currentData = {
-    "Spearmace": { tier: "S", winrate: "74.2%", score: "9.6" },
-    "MaceCart": { tier: "A", winrate: "68.5%", score: "8.4" },
-    "Modern": { tier: "S", winrate: "78.9%", score: "9.8" },
-    "DSMP Mace": { tier: "B+", winrate: "61.3%", score: "7.1" },
-    "NethSMP": { tier: "A+", winrate: "71.2%", score: "8.9" }
-  };
+// Tab switching (visual)
+const tabs = document.querySelectorAll(".tab");
 
-  // helper to update UI tiers + winrates + botScore
-  function updateUIFromData() {
-    for (const [gm, stats] of Object.entries(currentData)) {
-      const tierSpan = document.getElementById(`tier-${gm}`);
-      const wrSpan = document.getElementById(`wr-${gm}`);
-      const scoreSpan = document.getElementById(`botScore-${gm}`);
-      if (tierSpan) {
-        tierSpan.innerText = stats.tier;
-        // reset tier class to default, then add specific color class
-        tierSpan.className = "tier-badge";
-        let tierClass = "";
-        if (stats.tier === "S") tierClass = "tier-S";
-        else if (stats.tier === "S+") tierClass = "tier-Splus";
-        else if (stats.tier === "A") tierClass = "tier-A";
-        else if (stats.tier === "A+") tierClass = "tier-Aplus";
-        else if (stats.tier === "B+") tierClass = "tier-Bplus";
-        else if (stats.tier === "B") tierClass = "tier-B";
-        else tierClass = "tier-A";
-        tierSpan.classList.add(tierClass);
-      }
-      if (wrSpan) wrSpan.innerText = stats.winrate;
-      if (scoreSpan) scoreSpan.innerText = `${stats.score} / 10`;
-    }
-  }
+tabs.forEach(tab => {
+    tab.onclick = () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+    };
+});
 
-  // simulate bot api fetch (like calling your discord bot's REST endpoint)
-  function fetchBotRankings() {
-    return new Promise((resolve) => {
-      // Simulate network delay for realism
-      setTimeout(() => {
-        // new dynamic data generated by "Discord Bot" based on aggregated votes / stats
-        const newData = {
-          "Spearmace": { tier: "S+", winrate: "79.1%", score: "9.9" },
-          "MaceCart": { tier: "S-", winrate: "73.4%", score: "9.2" },
-          "Modern": { tier: "S+", winrate: "82.3%", score: "10.0" },
-          "DSMP Mace": { tier: "A", winrate: "67.8%", score: "8.1" },
-          "NethSMP": { tier: "S", winrate: "76.5%", score: "9.5" }
-        };
-        resolve(newData);
-      }, 650);
-    });
-  }
-
-  // show toast message
-  function showToast(message, isError = false) {
-    let existingToast = document.querySelector('.toast-msg');
-    if(existingToast) existingToast.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast-msg';
-    toast.innerHTML = `<i class="fab fa-discord"></i> ${message}`;
-    if(isError) toast.style.borderLeftColor = "#e06c75";
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 400);
-    }, 2800);
-  }
-
-  // sync with discord bot (simulated API call)
-  async function syncWithBot() {
-    const syncBtn = document.getElementById('syncBotBtn');
-    const originalText = syncBtn.innerHTML;
-    syncBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Syncing with bot...';
-    syncBtn.disabled = true;
-    try {
-      const freshRankings = await fetchBotRankings();
-      // update currentData with new values from bot
-      for (const [gm, stats] of Object.entries(freshRankings)) {
-        if (currentData[gm]) {
-          currentData[gm].tier = stats.tier;
-          currentData[gm].winrate = stats.winrate;
-          currentData[gm].score = stats.score;
-        }
-      }
-      updateUIFromData();
-      const now = new Date().toLocaleTimeString();
-      document.getElementById('lastSyncTime').innerHTML = now;
-      const logDiv = document.getElementById('botLog');
-      logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] ✅ Rankings updated! New meta fetched from Discord bot API (simulated).<br> 📊 Spearmace now ${freshRankings.Spearmace.tier} | Modern ${freshRankings.Modern.tier} | NethSMP became ${freshRankings.NethSMP.tier}<br>🕒 Last sync: ${now}`;
-      showToast(`✅ Discord bot pushed new tier data! (${freshRankings.Spearmace.tier}, ${freshRankings.Modern.tier} ...)`);
-    } catch (err) {
-      showToast("⚠️ Bot API error (sim) — but integration ready", true);
-      console.warn(err);
-    } finally {
-      syncBtn.innerHTML = originalText;
-      syncBtn.disabled = false;
-    }
-  }
-
-  // invite bot (placeholder but shows bot link is active)
-  function inviteBot() {
-    // In real scenario, you'd put discord oauth2 invite link with client id.
-    // we emulate with a nice info message to show bot linking concept.
-    showToast("🤖 Discord bot invite link: [MCTiers Bot] — contact server admin or use real OAuth2 URL", false);
-    const logDiv = document.getElementById('botLog');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] Invite requested! The official MCTiers bot can be added to your Discord server. <br> It provides live ranking commands, tier voting, and server stats integration. <br> 🔗 Invite link placeholder: https://discord.com/oauth2/authorize?client_id=MCTIERS_BOT&permissions=0&scope=bot`;
-  }
-
-  // test command: simulate discord slash command output
-  function testBotCommand() {
-    const randomGamemode = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"][Math.floor(Math.random() * 5)];
-    const currentTier = currentData[randomGamemode].tier;
-    const win = currentData[randomGamemode].winrate;
-    const logDiv = document.getElementById('botLog');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] 🧪 Command: \`/tier ${randomGamemode.toLowerCase()}\`<br> 🎯 **${randomGamemode}** is currently **Tier ${currentTier}** with a ${win} winrate (bot oracle).<br> 💡 Use \`/sync\` to refresh rankings from community votes. Website & bot fully linked.`;
-    showToast(`🤖 Discord bot replied: ${randomGamemode} tier ${currentTier}`, false);
-  }
-
-  // Copy server IP
-  function copyServerIp() {
-    const ipText = document.getElementById('serverIp').innerText;
-    navigator.clipboard.writeText(ipText).then(() => {
-      showToast(`📋 Copied server IP: ${ipText}`, false);
-    }).catch(() => {
-      showToast("Could not copy IP manually", true);
-    });
-  }
-
-  // attach all event listeners after DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    updateUIFromData();  // initial render
-
-    const syncBtn = document.getElementById('syncBotBtn');
-    if(syncBtn) syncBtn.addEventListener('click', syncWithBot);
-    
-    const inviteBtn = document.getElementById('inviteBotBtn');
-    if(inviteBtn) inviteBtn.addEventListener('click', inviteBot);
-    
-    const cmdBtn = document.getElementById('mockCmdBtn');
-    if(cmdBtn) cmdBtn.addEventListener('click', testBotCommand);
-    
-    const copyBtn = document.getElementById('copyIpBtn');
-    if(copyBtn) copyBtn.addEventListener('click', copyServerIp);
-    
-    // Set initial last sync time as 'not synced yet' but also add a welcome bot log
-    const logDiv = document.getElementById('botLog');
-    logDiv.innerHTML = `<i class="fab fa-discord"></i> [BOT] 🤖 Discord bot linked & ready! Use <strong>"Fetch latest data from bot"</strong> to receive live tier adjustments.<br> ✅ The bot can update winrates, push new meta stats, and interact with website.`;
-  });
+// Discord button
+function joinDiscord() {
+    window.open("https://discord.gg/2P7QJDgDh", "_blank");
+}
 </script>
+
 </body>
 </html>
