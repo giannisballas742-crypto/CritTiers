@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mace Tier List</title>
+
 <style>
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #808080; /* gray background */
+    background-color: #808080;
     color: white;
 }
 
@@ -53,12 +54,12 @@ header {
 }
 </style>
 </head>
+
 <body>
 
 <header>Mace Tier List</header>
 
 <div class="tabs" id="tabs"></div>
-
 <div class="container" id="content"></div>
 
 <script>
@@ -70,11 +71,13 @@ const gameModes = [
     "NethSMP"
 ];
 
-const sheetURL = "https://opensheet.elk.sh/YOUR_SHEET_ID/Sheet1";
+// 🔥 PUT YOUR CSV LINK HERE
+const sheetURL = "PASTE_YOUR_CSV_LINK_HERE";
 
 let currentMode = gameModes[0];
 let data = [];
 
+// Create tabs
 function createTabs() {
     const tabsDiv = document.getElementById("tabs");
     tabsDiv.innerHTML = "";
@@ -83,15 +86,18 @@ function createTabs() {
         const tab = document.createElement("div");
         tab.className = "tab" + (mode === currentMode ? " active" : "");
         tab.innerText = mode;
+
         tab.onclick = () => {
             currentMode = mode;
             createTabs();
             render();
         };
+
         tabsDiv.appendChild(tab);
     });
 }
 
+// Render players
 function render() {
     const container = document.getElementById("content");
     container.innerHTML = "";
@@ -116,20 +122,38 @@ function render() {
     });
 }
 
+// Parse CSV
+function parseCSV(text) {
+    const rows = text.trim().split("\n").map(r => r.split(","));
+    const headers = rows[0];
+
+    return rows.slice(1).map(row => {
+        let obj = {};
+        headers.forEach((h, i) => {
+            obj[h.trim()] = (row[i] || "").trim();
+        });
+        return obj;
+    });
+}
+
+// Fetch data
 async function fetchData() {
     try {
         const res = await fetch(sheetURL);
-        data = await res.json();
+        const text = await res.text();
+
+        data = parseCSV(text);
         render();
     } catch (e) {
-        console.error("Error loading sheet", e);
+        console.error("Error loading CSV:", e);
     }
 }
 
+// Init
 createTabs();
 fetchData();
 
-// Auto refresh every 30 seconds
+// Auto update every 30s
 setInterval(fetchData, 30000);
 </script>
 
