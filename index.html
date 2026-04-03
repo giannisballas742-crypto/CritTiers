@@ -451,16 +451,43 @@
   .player-role-badge {
     margin-top: 4px;
   }
-  .overall-right {
-    display: flex;
+
+  /* ===== OVERALL TAB ALIGNMENT FIX ===== */
+  /* Points and tier icons now perfectly aligned in straight line across all players */
+  .player-card .overall-right {
+    display: grid;
+    grid-template-columns: 120px 1fr;
     align-items: center;
     gap: 20px;
     margin-left: auto;
-    flex-wrap: wrap;
-    justify-content: flex-end;
   }
-  .points-box {
+  .player-card .points-box {
+    width: auto;
+    margin: 0;
     text-align: right;
+    justify-self: end;
+  }
+  .player-card .mode-icons {
+    margin-top: 0;
+    justify-self: start;
+  }
+  /* On small screens, allow stacking but keep alignment sensible */
+  @media (max-width: 700px) {
+    .player-card .overall-right {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      width: 100%;
+    }
+    .player-card .points-box {
+      justify-self: start;
+      text-align: left;
+    }
+    .player-card .mode-icons {
+      justify-self: start;
+    }
+  }
+
+  .points-box {
     background: #0f111a;
     padding: 6px 14px;
     border-radius: 40px;
@@ -474,46 +501,40 @@
   .mode-icons-compact {
     margin-top: 0;
   }
-  @media (max-width: 700px) {
-    .overall-left { flex-wrap: wrap; gap: 8px; }
-    .rank-number { min-width: 40px; font-size: 1.3rem; }
-    .overall-right { width: 100%; justify-content: space-between; margin-top: 8px; }
-  }
 
-  /* modal detail table */
-  .mode-detail-table {
+  .modal-detail-table {
     background: #11141c;
     border-radius: 20px;
     padding: 12px;
     margin-top: 16px;
   }
-  .mode-detail-row {
+  .modal-detail-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 0;
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
-  .mode-detail-row:last-child { border-bottom: none; }
-  .mode-detail-name {
+  .modal-detail-row:last-child { border-bottom: none; }
+  .modal-detail-name {
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
   }
-  .mode-detail-name img {
+  .modal-detail-name img {
     width: 24px;
     height: 24px;
     border-radius: 50%;
   }
-  .mode-detail-tier {
+  .modal-detail-tier {
     font-weight: 700;
     background: #2d3748;
     padding: 2px 10px;
     border-radius: 20px;
     font-size: 0.8rem;
   }
-  .mode-detail-points {
+  .modal-detail-points {
     color: #7cb8ff;
     font-weight: 600;
   }
@@ -653,7 +674,6 @@
     return { headers, data };
   }
 
-  // NEW: mode icons with actual emoji pictures (replaces placeholder text)
   function getModeIconsHTML(player, compact = false) {
     const modes = getPlayerModes(player);
     if (modes.length === 0) return '<div class="mode-icons mode-icons-compact" style="opacity:0.5;"><span class="text-xs text-gray-400">no tiers</span></div>';
@@ -674,11 +694,10 @@
         const points = tierPointsMap[baseTier] || 0;
         tooltipText = `${displayTier} → ${points} pts`;
       }
-      const shortLabel = MODE_SHORT_LABELS[modeName] || modeName.substring(0, 3).toUpperCase();
       const imgUrl = MODE_EMOJI[modeName] || "";
       html += `<div class="mode-icon-container" title="${tooltipText}">
                   <div class="mode-icon-image" style="border-color:${color};">
-                    <img src="${imgUrl}" alt="${shortLabel}" loading="lazy">
+                    <img src="${imgUrl}" alt="${MODE_SHORT_LABELS[modeName]}" loading="lazy">
                   </div>
                   <div class="mode-tier" style="background:${color}; color:#000;">${displayTier}</div>
                 </div>`;
@@ -843,7 +862,6 @@
         const regionClass = getRegionClass(region);
         if(region && regionClass) regionInline = `<span class="region-badge ${regionClass} ml-2 align-middle">${region}</span>`;
         
-        // Build detailed mode breakdown (full bot)
         const modesDetail = getPlayerModes(p);
         let detailRows = '';
         for (let { modeName, rawTier } of modesDetail) {
@@ -851,10 +869,10 @@
           if (!parsed) continue;
           const pointsEarned = tierPointsMap[parsed.baseTier] || 0;
           const imgUrl = MODE_EMOJI[modeName];
-          detailRows += `<div class="mode-detail-row">
-            <div class="mode-detail-name"><img src="${imgUrl}" alt="${modeName}"> ${modeName}</div>
-            <div><span class="mode-detail-tier">${parsed.display}</span> ${parsed.peakTier ? `<span class="text-xs text-yellow-300 ml-2">(peak ${parsed.peakTier})</span>` : ''}</div>
-            <div class="mode-detail-points">${pointsEarned} pts</div>
+          detailRows += `<div class="modal-detail-row">
+            <div class="modal-detail-name"><img src="${imgUrl}" alt="${modeName}"> ${modeName}</div>
+            <div><span class="modal-detail-tier">${parsed.display}</span> ${parsed.peakTier ? `<span class="text-xs text-yellow-300 ml-2">(peak ${parsed.peakTier})</span>` : ''}</div>
+            <div class="modal-detail-points">${pointsEarned} pts</div>
           </div>`;
         }
         if (detailRows === '') detailRows = '<div class="text-center text-gray-400 py-2">No ranked modes found.</div>';
@@ -865,7 +883,7 @@
         <div class="mt-6">${getModeIconsHTML(p, false)}</div>
         <div class="text-center mt-4"><span class="text-gray-400">Overall Rank:</span> <span class="text-xl font-bold text-yellow-400">#${overallRank}</span></div>
         <div class="text-center mt-2"><span class="text-gray-400">Total Points:</span> <span class="text-2xl font-bold text-blue-400">${p[pointsCol]}</span></div>
-        <div class="mode-detail-table"><div class="font-bold mb-2 text-blue-300">📊 FULL BOT BREAKDOWN (per mode)</div>${detailRows}</div>`;
+        <div class="modal-detail-table"><div class="font-bold mb-2 text-blue-300">📊 FULL BOT BREAKDOWN (per mode)</div>${detailRows}</div>`;
         document.getElementById("modal-content").innerHTML = modalHtml;
         document.getElementById("player-modal").classList.remove("hidden");
       };
