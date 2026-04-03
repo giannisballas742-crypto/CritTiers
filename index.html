@@ -528,7 +528,8 @@
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "Total", regionCol = "__region";
 
-  const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
+  // EXACT POINTS PER TIER (as requested)
+  const tierPointsMap = { "HT1":60, "LT1":45, "HT2":30, "LT2":20, "HT3":10, "LT3":6, "HT4":4, "LT4":3, "HT5":2, "LT5":1 };
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
   const MODE_NAMES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
@@ -626,11 +627,15 @@
       const baseTier = parsed.baseTier;
       const peakTier = parsed.peakTier;
       const color = tierColors[baseTier] || "#666";
+      // Build tooltip text with exact points from tierPointsMap
       let tooltipText = "";
       if (peakTier) {
-        tooltipText = `⚡ Peak: ${peakTier} → ${tierPointsMap[peakTier]} pts | Current: ${displayTier} → ${tierPointsMap[baseTier]} pts`;
+        const currentPoints = tierPointsMap[baseTier] || 0;
+        const peakPoints = tierPointsMap[peakTier] || 0;
+        tooltipText = `⚡ Peak: ${peakTier} (${peakPoints} pts) | Current: ${displayTier} (${currentPoints} pts)`;
       } else {
-        tooltipText = `${displayTier} → ${tierPointsMap[baseTier]} pts`;
+        const points = tierPointsMap[baseTier] || 0;
+        tooltipText = `${displayTier} → ${points} pts`;
       }
       const shortLabel = MODE_SHORT_LABELS[modeName] || modeName.substring(0, 3).toUpperCase();
       html += `<div class="mode-icon-container" title="${tooltipText}">
@@ -721,11 +726,9 @@
           regionHTML = `<span class="region-badge ${regionClass}">${region}</span>`;
         }
         
-        // Role badge (small under name)
         const roleSmall = getRoleByPoints(pointsVal);
         const roleHtml = `<span class="rank ${roleSmall.className}" style="font-size:0.7rem; padding:2px 10px;"><i class="${roleSmall.icon.split(' ')[1]}"></i> ${roleSmall.name}</span>`;
         
-        // Points display
         const pointsDisplay = `<div class="points-box"><span class="points-value">${r[pointsCol]}</span> <span class="text-xs text-gray-400">pts</span></div>`;
         const modeIconsCompact = getModeIconsHTML(r, true);
         
@@ -748,7 +751,6 @@
         </div>`;
       });
     } else {
-      // Mode-specific unchanged (tier columns)
       const tierGroups = [
         { name: "Tier 1", tiers: ["HT1", "LT1"] },
         { name: "Tier 2", tiers: ["HT2", "LT2"] },
@@ -817,7 +819,6 @@
     }
     document.getElementById("rankings").innerHTML = htmlOut;
 
-    // Attach click handlers to all cards
     document.querySelectorAll(".player-card, .player-card-tier").forEach(card => {
       card.onclick = () => {
         const p = JSON.parse(card.dataset.player.replace(/&apos;/g, "'"));
