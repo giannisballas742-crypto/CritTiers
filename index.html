@@ -17,7 +17,6 @@
     overflow-x: hidden;
     min-height: 100vh;
   }
-  /* Star particles (white) */
   #particles {
     position: fixed;
     top: 0;
@@ -42,23 +41,18 @@
     100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
   }
 
-  /* ---- CRITTIERS TOP BAR (tighter, moved slightly) ---- */
+  /* ---- CRITTIERS TOP BAR (tightened) ---- */
   .top-bar {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    padding: 12px 0 16px 0;   /* reduced top padding */
+    padding: 12px 0 16px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 20px;
   }
-  .brand { 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-    margin-left: -8px;  /* shift left a tiny bit */
-  }
+  .brand { display: flex; align-items: center; gap: 12px; margin-left: -8px; }
   .brand-logo {
     width: 48px; height: 48px; border-radius: 12px;
     background: #11141c; object-fit: cover;
@@ -69,20 +63,8 @@
     background: linear-gradient(135deg, #ffffff, #7cb8ff);
     background-clip: text; -webkit-background-clip: text; color: transparent;
   }
-  .right-panel { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: flex-end; 
-    gap: 8px; 
-    margin-top: -4px; /* nudge up slightly */
-  }
-  .search-area { 
-    display: flex; 
-    gap: 10px; 
-    align-items: center; 
-    flex-wrap: wrap; 
-    justify-content: flex-end; 
-  }
+  .right-panel { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: -4px; }
+  .search-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .search-input {
     background: #12141c; border: 1px solid #2a2e3a; padding: 8px 14px;
     border-radius: 40px; width: 220px; font-family: 'Inter', monospace;
@@ -107,7 +89,7 @@
   .copy-ip-btn:hover { background: #3f4458; }
   .copy-feedback { font-size: 11px; color: #6cfe9e; margin-left: 4px; }
 
-  /* TABS (blue underline & glow) */
+  /* TABS (blue) */
   .tabs-container {
     display: flex;
     flex-wrap: wrap;
@@ -131,9 +113,7 @@
     font-family: 'Inter', sans-serif;
   }
   .mctier-tab:hover { color: #ffffff; }
-  .mctier-tab.active {
-    color: white;
-  }
+  .mctier-tab.active { color: white; }
   .mctier-tab.active::after {
     content: '';
     position: absolute;
@@ -146,7 +126,7 @@
     box-shadow: 0 0 8px #3b82f6;
   }
 
-  /* PLAYER CARDS (blue hover) */
+  /* PLAYER CARDS */
   .player-card {
     background: #1f2937;
     padding: 12px;
@@ -178,11 +158,7 @@
     cursor: help;
     font-size: 1.2rem;
   }
-  /* tooltip border blue */
-  [data-tooltip] {
-    position: relative;
-    cursor: help;
-  }
+  [data-tooltip] { position: relative; cursor: help; }
   [data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -206,7 +182,6 @@
   }
   [data-tooltip]:hover::after { opacity: 1; }
 
-  /* mode icons */
   .mode-icons {
     display: flex;
     gap: 10px;
@@ -243,7 +218,7 @@
     min-width: 38px;
   }
 
-  /* rank badges */
+  /* RANK BADGES (CritTiers roles) */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -268,18 +243,12 @@
   .region-badge.SA { background:#db2777; color:#fff; }
   .region-badge.AU { background:#fbbf24; color:#000; }
 
-  /* modal border blue */
   .modal-bg { background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); position:fixed; inset:0; display:flex; justify-content:center; align-items:center; z-index:1000; }
   .modal { background:#1f2937; padding:24px; border-radius:28px; max-width:500px; width:90%; max-height:85vh; overflow-y:auto; border:1px solid #3b82f6; box-shadow:0 20px 35px rgba(0,0,0,0.6); }
   .modal-close { cursor:pointer; float:right; font-size:1.8rem; line-height:1; color:#aaa; }
   .modal-close:hover { color:#3b82f6; }
 
-  /* reduce outer container padding to bring everything closer to edges */
-  .main-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
+  .main-container { max-width: 1300px; margin: 0 auto; padding: 0 20px; }
   @media (max-width: 700px) {
     .top-bar { flex-direction: column; align-items: flex-start; }
     .right-panel { align-items: stretch; width: 100%; }
@@ -324,12 +293,12 @@
 </div>
 
 <script>
-  // ========== CSV URL (same) ==========
+  // ========== CSV URL ==========
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Z8SzplonsR2NbZ20b6TazugXY4YjX3sMeIxGG_cXErabJUERRszTqoOX7RPAYQXnlfnwbQemEP7k/pub?output=csv";
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "", regionCol = "__region";
 
-  // Tier mapping
+  // Tier mapping (for kit tiers inside player cards)
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
@@ -337,6 +306,23 @@
   const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
   const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
 
+  // ----- NEW ROLE ASSIGNMENT BASED ON OVERALL RANK -----
+  function getRoleByRank(rank) {
+    if (rank <= 3) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
+    if (rank <= 28) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
+    if (rank <= 63) return { name: "CritTiers Specialist", icon: "<i class='fas fa-star'></i>", className: "specialist", symbol: "✨" };
+    if (rank <= 163) return { name: "CritTiers Cadet", icon: "<i class='fas fa-user-graduate'></i>", className: "cadet", symbol: "🎓" };
+    if (rank <= 463) return { name: "CritTiers Novice", icon: "<i class='fas fa-feather-alt'></i>", className: "novice", symbol: "🌱" };
+    return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
+  }
+
+  function getRankBadge(rank, large = false) {
+    const r = getRoleByRank(rank);
+    const cls = large ? `rank ${r.className} rank-large` : `rank ${r.className}`;
+    return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
+  }
+
+  // Tier parsing (unchanged)
   function extractBaseTierFromCode(tierCode) {
     const match = tierCode.match(/(HT[1-5]|LT[1-5])/i);
     return match ? match[1].toUpperCase() : null;
@@ -357,24 +343,6 @@
     return { display: upper, baseTier: baseTier, peakTier: null };
   }
   function extractBaseTier(rawTier) { return parseTierString(rawTier)?.baseTier || null; }
-
-  function getRoleByPoints(p) {
-    const pts = parseFloat(p);
-    if (isNaN(pts)) return null;
-    if (pts >= 100) return { name:"Mace Master", icon:"<i class='fas fa-crown'></i>", className:"master", symbol:"🏆" };
-    if (pts >= 50) return { name:"Mace Ace", icon:"<i class='fas fa-shield-alt'></i>", className:"ace", symbol:"⚡" };
-    if (pts >= 25) return { name:"Mace Specialist", icon:"<i class='fas fa-star'></i>", className:"specialist", symbol:"✨" };
-    if (pts >= 10) return { name:"Mace Cadet", icon:"<i class='fas fa-user-graduate'></i>", className:"cadet", symbol:"🎓" };
-    if (pts >= 5) return { name:"Mace Novice", icon:"<i class='fas fa-feather-alt'></i>", className:"novice", symbol:"🌱" };
-    if (pts >= 1) return { name:"Mace Rookie", icon:"<i class='fas fa-baby-carriage'></i>", className:"rookie", symbol:"🍼" };
-    return null;
-  }
-  function getRankBadge(p, large=false) {
-    const r = getRoleByPoints(p);
-    if(!r) return '';
-    const cls = large ? `rank ${r.className} rank-large` : `rank ${r.className}`;
-    return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
-  }
 
   function parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(l=>l.trim());
@@ -421,6 +389,11 @@
     nameCol = headers.find(h=>/name|player/i.test(h)) || headers[0];
     pointsCol = headers.find(h=>/points/i.test(h)) || headers[1];
     
+    // Compute overall rank for each player (by points descending)
+    const sortedByPoints = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
+    sortedByPoints.forEach((player, idx) => { player.overallRank = idx + 1; });
+    // Also store rank back into allRows (since references are same)
+    
     const tabsDiv = document.getElementById("tabs");
     tabsDiv.innerHTML = "";
     MODES.forEach((mode, idx) => {
@@ -458,26 +431,27 @@
         const name = r[nameCol];
         if(!name) return;
         const pointsVal = parseFloat(r[pointsCol]||0);
+        const rank = idx + 1;
         const avatar = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`;
         const region = r[regionCol];
         let medalHtml = "";
-        if(idx===0) medalHtml = `<i class="fas fa-crown text-yellow-400 mr-1"></i>`;
-        else if(idx===1) medalHtml = `<i class="fas fa-medal text-gray-300 mr-1"></i>`;
-        else if(idx===2) medalHtml = `<i class="fas fa-medal text-amber-600 mr-1"></i>`;
+        if(rank===1) medalHtml = `<i class="fas fa-crown text-yellow-400 mr-1"></i>`;
+        else if(rank===2) medalHtml = `<i class="fas fa-medal text-gray-300 mr-1"></i>`;
+        else if(rank===3) medalHtml = `<i class="fas fa-medal text-amber-600 mr-1"></i>`;
         let regionHTML = "";
         if(region) {
           let rc = ""; const reg = region.toUpperCase().trim();
           if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
           regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
         }
-        htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}">
+        htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${rank}">
           <img src="${avatar}" class="player-img">
           <div class="flex-1">
-            <div class="flex items-center flex-wrap gap-2"><span class="font-bold text-lg">${idx+1}.</span> ${medalHtml}<span class="font-semibold">${name}</span>${regionHTML}</div>
+            <div class="flex items-center flex-wrap gap-2"><span class="font-bold text-lg">${rank}.</span> ${medalHtml}<span class="font-semibold">${name}</span>${regionHTML}</div>
             ${getModeIconsHTML(r)}
           </div>
           <div class="text-right flex flex-col items-end gap-1">
-            ${getRankBadge(pointsVal, true)}
+            ${getRankBadge(rank, true)}
             <div class="font-mono text-xl font-bold text-blue-400">${r[pointsCol]} <span class="text-sm">pts</span></div>
           </div>
         </div>`;
@@ -503,15 +477,16 @@
           const avatar = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`;
           const region = r[regionCol];
           const pointsVal = parseFloat(r[pointsCol]||0);
+          const overallRank = r.overallRank || 999;
           let regionHTML = "";
           if(region) {
             let rc = ""; const reg = region.toUpperCase().trim();
             if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
             regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
           }
-          htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}">
+          htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${overallRank}">
             <img src="${avatar}" class="player-img">
-            <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(pointsVal, false)}</div>
+            <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(overallRank, false)}</div>
             <div class="font-mono text-sm ml-auto text-blue-300">${r[pointsCol] || 0} pts</div>
           </div>`;
         });
@@ -520,20 +495,14 @@
     }
     document.getElementById("rankings").innerHTML = htmlOut;
 
-    function getOverallRank(pObj) {
-      const sorted = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
-      const pName = pObj[nameCol];
-      const pPoints = parseFloat(pObj[pointsCol]||0);
-      const idx = sorted.findIndex(p => p[nameCol] === pName && parseFloat(p[pointsCol]||0) === pPoints);
-      return idx !== -1 ? idx+1 : null;
-    }
+    // Modal click handler
     document.querySelectorAll(".player-card").forEach(card => {
       card.onclick = () => {
         const p = JSON.parse(card.dataset.player.replace(/&apos;/g, "'"));
         const avatar = `https://mc-heads.net/avatar/${encodeURIComponent(p[nameCol])}/128`;
         const region = p[regionCol];
         const pointsVal = parseFloat(p[pointsCol]||0);
-        const overallRank = getOverallRank(p);
+        const overallRank = p.overallRank || 999;
         let regionInline = '';
         if(region) {
           let rc = ""; const reg = region.toUpperCase().trim();
@@ -542,10 +511,10 @@
         }
         let modalHtml = `<div class="flex justify-center mb-4"><img src="${avatar}" style="width:120px;height:120px;border-radius:50%;border:3px solid #3b82f6;"></div>
         <h2 class="text-2xl font-bold text-center">${p[nameCol]} ${regionInline}</h2>
-        <div class="flex justify-center mt-3">${getRankBadge(pointsVal, true)}</div>
-        <div class="mt-6">${getModeIconsHTML(p)}</div>`;
-        if(overallRank) modalHtml += `<div class="text-center mt-4"><span class="text-gray-400">Overall Rank:</span> <span class="text-xl font-bold text-yellow-400">#${overallRank}</span></div>`;
-        modalHtml += `<div class="text-center mt-2 border-t border-gray-600 pt-3"><span class="text-gray-400">Total Points:</span> <span class="text-2xl font-bold text-blue-400">${p[pointsCol]}</span></div>`;
+        <div class="flex justify-center mt-3">${getRankBadge(overallRank, true)}</div>
+        <div class="mt-6">${getModeIconsHTML(p)}</div>
+        <div class="text-center mt-4"><span class="text-gray-400">Overall Rank:</span> <span class="text-xl font-bold text-yellow-400">#${overallRank}</span></div>
+        <div class="text-center mt-2 border-t border-gray-600 pt-3"><span class="text-gray-400">Total Points:</span> <span class="text-2xl font-bold text-blue-400">${p[pointsCol]}</span></div>`;
         document.getElementById("modal-content").innerHTML = modalHtml;
         document.getElementById("player-modal").classList.remove("hidden");
       };
