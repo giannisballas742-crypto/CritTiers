@@ -40,7 +40,6 @@
     100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
   }
 
-  /* ---- CRITTIERS TOP BAR ---- */
   .top-bar {
     display: flex;
     flex-wrap: wrap;
@@ -88,7 +87,6 @@
   .copy-ip-btn:hover { background: #3f4458; }
   .copy-feedback { font-size: 11px; color: #6cfe9e; margin-left: 4px; }
 
-  /* TABS */
   .tabs-container {
     display: flex;
     flex-wrap: wrap;
@@ -125,7 +123,6 @@
     box-shadow: 0 0 8px #3b82f6;
   }
 
-  /* PLAYER CARDS with fancy top-3 banners */
   .player-card {
     background: #1f2937;
     padding: 12px;
@@ -140,7 +137,7 @@
     position: relative;
     overflow: hidden;
   }
-  /* Gold banner (fancy) */
+  /* Fancy banners for top 3 */
   .player-card.gold-banner {
     background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
     border-left: 4px solid #ffd700;
@@ -166,7 +163,6 @@
     background: radial-gradient(ellipse at 30% 50%, rgba(255,215,0,0.08), transparent 70%);
     pointer-events: none;
   }
-  /* Silver banner */
   .player-card.silver-banner {
     background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
     border-left: 4px solid #c0c0c0;
@@ -182,17 +178,6 @@
     transform: rotate(10deg);
     pointer-events: none;
   }
-  .player-card.silver-banner::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at 30% 50%, rgba(192,192,192,0.06), transparent 70%);
-    pointer-events: none;
-  }
-  /* Bronze banner */
   .player-card.bronze-banner {
     background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
     border-left: 4px solid #cd7f32;
@@ -208,22 +193,11 @@
     transform: rotate(5deg);
     pointer-events: none;
   }
-  .player-card.bronze-banner::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at 30% 50%, rgba(205,127,50,0.06), transparent 70%);
-    pointer-events: none;
-  }
   .player-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 20px rgba(59,130,246,0.3);
     border-color: rgba(59,130,246,0.5);
   }
-  /* Avatar placeholder */
   .player-avatar {
     width: 52px;
     height: 52px;
@@ -307,7 +281,6 @@
     min-width: 38px;
   }
 
-  /* Rank badges (CritTiers roles) */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -382,7 +355,6 @@
 </div>
 
 <script>
-  // ========== CSV URL ==========
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Z8SzplonsR2NbZ20b6TazugXY4YjX3sMeIxGG_cXErabJUERRszTqoOX7RPAYQXnlfnwbQemEP7k/pub?output=csv";
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "", regionCol = "__region";
@@ -391,25 +363,31 @@
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
-  const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
-  const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
-
-  function getRoleByRank(rank) {
-    if (rank <= 3) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
-    if (rank <= 28) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
-    if (rank <= 63) return { name: "CritTiers Specialist", icon: "<i class='fas fa-star'></i>", className: "specialist", symbol: "✨" };
-    if (rank <= 163) return { name: "CritTiers Cadet", icon: "<i class='fas fa-user-graduate'></i>", className: "cadet", symbol: "🎓" };
-    if (rank <= 463) return { name: "CritTiers Novice", icon: "<i class='fas fa-feather-alt'></i>", className: "novice", symbol: "🌱" };
-    return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
+  const MODE_NAMES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
+  // Case‑insensitive column matching
+  function findModeColumn(player, modeName) {
+    const lowerMode = modeName.toLowerCase();
+    for (let key in player) {
+      if (key.toLowerCase() === lowerMode) return key;
+    }
+    // also try without spaces (e.g., "DSMPMace")
+    const noSpace = modeName.replace(/\s/g, '');
+    for (let key in player) {
+      if (key.toLowerCase() === noSpace.toLowerCase()) return key;
+    }
+    return null;
   }
 
-  function getRankBadge(rank, large = false) {
-    const r = getRoleByRank(rank);
-    const cls = large ? `rank ${r.className} rank-large` : `rank ${r.className}`;
-    return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
+  function getPlayerModes(player) {
+    const result = [];
+    for (let mode of MODE_NAMES) {
+      const col = findModeColumn(player, mode);
+      if (col && player[col] && player[col].trim() !== "") {
+        result.push({ modeName: mode, rawTier: player[col] });
+      }
+    }
+    return result;
   }
-
-  function getInitial(name) { return name ? name.charAt(0).toUpperCase() : "?"; }
 
   function extractBaseTierFromCode(tierCode) {
     const match = tierCode.match(/(HT[1-5]|LT[1-5])/i);
@@ -430,7 +408,22 @@
     if (!baseTier) return null;
     return { display: upper, baseTier: baseTier, peakTier: null };
   }
-  function extractBaseTier(rawTier) { return parseTierString(rawTier)?.baseTier || null; }
+
+  function getRoleByRank(rank) {
+    if (rank <= 3) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
+    if (rank <= 28) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
+    if (rank <= 63) return { name: "CritTiers Specialist", icon: "<i class='fas fa-star'></i>", className: "specialist", symbol: "✨" };
+    if (rank <= 163) return { name: "CritTiers Cadet", icon: "<i class='fas fa-user-graduate'></i>", className: "cadet", symbol: "🎓" };
+    if (rank <= 463) return { name: "CritTiers Novice", icon: "<i class='fas fa-feather-alt'></i>", className: "novice", symbol: "🌱" };
+    return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
+  }
+  function getRankBadge(rank, large = false) {
+    const r = getRoleByRank(rank);
+    const cls = large ? `rank ${r.className} rank-large` : `rank ${r.className}`;
+    return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
+  }
+
+  function getInitial(name) { return name ? name.charAt(0).toUpperCase() : "?"; }
 
   function parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(l=>l.trim());
@@ -446,10 +439,10 @@
   }
 
   function getModeIconsHTML(player) {
+    const modes = getPlayerModes(player);
+    if (modes.length === 0) return '<div class="mode-icons" style="opacity:0.5;"><span class="text-xs text-gray-400">no tiers</span></div>';
     let html = '<div class="mode-icons">';
-    for (let mode of MODE_COLUMNS) {
-      const rawTier = player[mode];
-      if (!rawTier) continue;
+    for (let { modeName, rawTier } of modes) {
       const parsed = parseTierString(rawTier);
       if (!parsed) continue;
       const displayTier = parsed.display;
@@ -457,7 +450,8 @@
       const peakTier = parsed.peakTier;
       const color = tierColors[baseTier] || "#666";
       let tooltipText = peakTier ? `⚡ Peak: ${peakTier} → ${tierPointsMap[peakTier]} pts` : `${displayTier} → ${tierPointsMap[baseTier]} pts`;
-      let shortMode = mode.replace(" Mace", "").substring(0, 3);
+      let shortMode = modeName.replace("Mace", "").replace("DSMP", "").substring(0, 3);
+      if (modeName === "DSMP Mace") shortMode = "DSM";
       html += `<div class="mode-icon-container" data-tooltip="${tooltipText}">
                   <div class="mode-icon-placeholder" style="background:${color}20; border-color:${color};">
                     <span style="font-size:10px; font-weight:bold; color:${color};">${shortMode}</span>
@@ -482,7 +476,8 @@
     
     const tabsDiv = document.getElementById("tabs");
     tabsDiv.innerHTML = "";
-    MODES.forEach((mode, idx) => {
+    const allModes = ["Overall", ...MODE_NAMES];
+    allModes.forEach((mode, idx) => {
       const btn = document.createElement("button");
       btn.textContent = mode === "Overall" ? "🏆 OVERALL" : mode.toUpperCase();
       btn.className = "mctier-tab";
@@ -544,14 +539,19 @@
         </div>`;
       });
     } else {
+      // For specific mode tab, group by tier using the exact column (case-insensitive)
       const groups = {};
+      const modeCol = findModeColumn({}, mode) || mode; // fallback
       allRows.forEach(r => {
         const name = r[nameCol];
         if(!name) return;
-        const raw = r[mode];
-        if(!raw) return;
-        const baseTier = extractBaseTier(raw);
-        if(!baseTier) return;
+        let raw = null;
+        for (let key in r) {
+          if (key.toLowerCase() === mode.toLowerCase()) { raw = r[key]; break; }
+        }
+        if (!raw) return;
+        const baseTier = extractBaseTierFromCode(raw);
+        if (!baseTier) return;
         if(!groups[baseTier]) groups[baseTier]=[];
         groups[baseTier].push(r);
       });
