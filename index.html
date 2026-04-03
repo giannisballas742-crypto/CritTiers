@@ -9,8 +9,17 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #808080;
+    background: #808080;
     color: white;
+    overflow-x: hidden;
+}
+
+/* PARTICLE CANVAS */
+#particles {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
 }
 
 /* TOP BAR */
@@ -26,7 +35,7 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-top: 10px; /* move down slightly */
+    margin-top: 10px;
 }
 
 .left img {
@@ -52,6 +61,7 @@ body {
     outline: none;
 }
 
+/* SERVER IP BOX */
 .server-box {
     margin-top: 10px;
     background: #222;
@@ -86,29 +96,39 @@ body {
     border-radius: 20px;
     cursor: pointer;
     white-space: nowrap;
-    transition: 0.2s;
+    transition: 0.3s;
     border: 1px solid transparent;
 }
 
+/* HOVER */
 .tab:hover {
     background: #3a3a3a;
 }
 
+/* ACTIVE TAB WITH GLOW + GRADIENT */
 .tab.active {
-    border-bottom: 2px solid white;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: black;
+    box-shadow: 0 0 10px #00f2fe, 0 0 20px #4facfe;
 }
 
+/* SCROLLBAR HIDE */
+.tabs::-webkit-scrollbar {
+    display: none;
+}
 </style>
 </head>
 
 <body>
+
+<canvas id="particles"></canvas>
 
 <!-- TOP BAR -->
 <div class="topbar">
     
     <!-- LEFT -->
     <div class="left">
-        <img src="https://i.ibb.co/3bHWyM6/image.png" alt="logo">
+        <img src="https://i.ibb.co/3bHWyM6/image.png">
         <div class="title">CritTiers</div>
     </div>
 
@@ -126,14 +146,15 @@ body {
 <!-- TABS -->
 <div class="tabs">
     <div class="tab active">🏆 Overall</div>
-    <div class="tab"> Spearmace</div>
-    <div class="tab"> MaceCart</div>
-    <div class="tab"> Modern</div>
-    <div class="tab"> DSMP Mace</div>
-    <div class="tab"> NethSMP</div>
+    <div class="tab">⚔️ Spearmace</div>
+    <div class="tab">🛒 MaceCart</div>
+    <div class="tab">🧪 Modern</div>
+    <div class="tab">❤️ DSMP Mace</div>
+    <div class="tab">🌍 NethSMP</div>
 </div>
 
 <script>
+/* TAB SWITCHING */
 const tabs = document.querySelectorAll(".tab");
 
 tabs.forEach(tab => {
@@ -142,6 +163,52 @@ tabs.forEach(tab => {
         tab.classList.add("active");
     };
 });
+
+/* PARTICLES BACKGROUND */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for (let i = 0; i < 80; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+    });
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+/* RESIZE FIX */
+window.onresize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+};
 </script>
 
 </body>
