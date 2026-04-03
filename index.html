@@ -3,15 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>CritTiers · Mace Leaderboards (Auto CSV)</title>
+  <title>CritTiers · Dynamic Mace Leaderboards</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: #0b0d12;
@@ -19,7 +14,6 @@
       overflow-x: hidden;
       min-height: 100vh;
     }
-
     #particles {
       position: fixed;
       top: 0;
@@ -29,7 +23,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
     .app-wrapper {
       position: relative;
       z-index: 2;
@@ -37,8 +30,6 @@
       margin: 0 auto;
       padding: 0 28px 48px 28px;
     }
-
-    /* top bar */
     .top-bar {
       display: flex;
       flex-wrap: wrap;
@@ -49,300 +40,83 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       margin-bottom: 8px;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 16px; }
     .brand-logo {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background: #11141c;
-      object-fit: cover;
+      width: 54px; height: 54px; border-radius: 14px;
+      background: #11141c; object-fit: cover;
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
     }
-
     .brand-name {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 32px; font-weight: 700; letter-spacing: -0.5px;
       background: linear-gradient(135deg, #ffffff, #b9c8ff);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
+      background-clip: text; -webkit-background-clip: text; color: transparent;
     }
-
-    .right-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-    }
-
-    .search-area {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
+    .right-panel { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+    .search-area { display: flex; gap: 10px; align-items: center; }
     .search-input {
-      background: #12141c;
-      border: 1px solid #2a2e3a;
-      padding: 10px 16px;
-      border-radius: 40px;
-      width: 240px;
-      font-family: 'Inter', monospace;
-      font-size: 14px;
-      color: #f0f3fa;
-      outline: none;
-      transition: 0.2s;
+      background: #12141c; border: 1px solid #2a2e3a; padding: 10px 16px;
+      border-radius: 40px; width: 240px; font-family: 'Inter', monospace;
+      font-size: 14px; color: #f0f3fa; outline: none;
     }
-
-    .search-input:focus {
-      border-color: #4facfe;
-      box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
-    }
-
+    .search-input:focus { border-color: #4facfe; box-shadow: 0 0 0 2px rgba(79,172,254,0.2); }
     .refresh-btn {
-      background: #1e212b;
-      border: none;
-      border-radius: 40px;
-      padding: 8px 16px;
-      color: #cbd5ff;
-      font-weight: 500;
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Inter', sans-serif;
+      background: #1e212b; border: none; border-radius: 40px; padding: 8px 16px;
+      color: #cbd5ff; font-weight: 500; font-size: 13px; cursor: pointer;
+      transition: 0.2s; display: flex; align-items: center; gap: 8px;
     }
-
-    .refresh-btn:hover {
-      background: #2d3243;
-      color: white;
-    }
-
+    .refresh-btn:hover { background: #2d3243; color: white; }
     .server-card {
-      background: #0f1118;
-      border: 1px solid #262b36;
-      border-radius: 48px;
-      padding: 6px 12px 6px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      background: #0f1118; border: 1px solid #262b36; border-radius: 48px;
+      padding: 6px 12px 6px 20px; display: flex; align-items: center; gap: 16px;
       backdrop-filter: blur(2px);
     }
-
-    .server-label {
-      font-size: 13px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #8f9bb5;
-    }
-
-    .ip-address {
-      background: #1a1d26;
-      padding: 6px 14px;
-      border-radius: 32px;
-      font-family: monospace;
-      font-weight: 500;
-      font-size: 15px;
-      color: #b9e2ff;
-    }
-
-    .copy-ip-btn {
-      background: #2b2f3e;
-      border: none;
-      color: white;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .copy-ip-btn:hover {
-      background: #3f4458;
-    }
-
-    .copy-feedback {
-      font-size: 12px;
-      color: #6cfe9e;
-      margin-left: 6px;
-    }
-
-    /* MCTiers tabs */
+    .server-label { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; color: #8f9bb5; }
+    .ip-address { background: #1a1d26; padding: 6px 14px; border-radius: 32px; font-family: monospace; font-weight: 500; font-size: 15px; color: #b9e2ff; }
+    .copy-ip-btn { background: #2b2f3e; border: none; color: white; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 40px; cursor: pointer; }
+    .copy-ip-btn:hover { background: #3f4458; }
+    .copy-feedback { font-size: 12px; color: #6cfe9e; margin-left: 6px; }
     .tabs-container {
-      margin-top: 28px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 0;
+      margin-top: 28px; display: flex; flex-wrap: wrap; gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0;
     }
-
     .mctier-tab {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      padding: 12px 18px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #a9b3cf;
-      background: transparent;
-      border: none;
-      position: relative;
-      text-transform: uppercase;
-      font-family: 'Inter', sans-serif;
+      font-size: 16px; font-weight: 600; letter-spacing: 0.3px; padding: 12px 18px;
+      cursor: pointer; transition: all 0.2s; color: #a9b3cf;
+      background: transparent; border: none; position: relative;
+      text-transform: uppercase; font-family: 'Inter', sans-serif;
     }
-
-    .mctier-tab:hover {
-      color: #ffffff;
-    }
-
-    .mctier-tab.active {
-      color: white;
-    }
-
+    .mctier-tab:hover { color: #ffffff; }
+    .mctier-tab.active { color: white; }
     .mctier-tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 10%;
-      width: 80%;
-      height: 3px;
-      background: linear-gradient(90deg, #4facfe, #9ad0ff, #00e0ff);
-      border-radius: 4px;
-      box-shadow: 0 0 8px #00c3ff;
+      content: ''; position: absolute; bottom: -1px; left: 10%; width: 80%;
+      height: 3px; background: linear-gradient(90deg, #4facfe, #9ad0ff, #00e0ff);
+      border-radius: 4px; box-shadow: 0 0 8px #00c3ff;
     }
-
-    .leaderboard-panels {
-      margin-top: 36px;
-    }
-
-    .leader-panel {
-      display: none;
-      animation: fadeSlide 0.25s ease-out;
-    }
-
-    .leader-panel.active-panel {
-      display: block;
-    }
-
-    @keyframes fadeSlide {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    .leaderboard-panels { margin-top: 36px; }
+    .leader-panel { display: none; animation: fadeSlide 0.25s ease-out; }
+    .leader-panel.active-panel { display: block; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .rank-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: rgba(12, 14, 20, 0.75);
-      backdrop-filter: blur(3px);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      width: 100%; border-collapse: collapse; background: rgba(12,14,20,0.75);
+      backdrop-filter: blur(3px); border-radius: 24px; overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
     }
-
-    .rank-table thead tr {
-      background: #0f121bb3;
-    }
-
-    .rank-table th {
-      text-align: left;
-      padding: 18px 20px;
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #b3c7ff;
-      background: #0a0c14;
-    }
-
-    .rank-table td {
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: #eef2ff;
-      font-size: 15px;
-    }
-
-    .rank-table tbody tr:hover {
-      background: rgba(79, 172, 254, 0.08);
-    }
-
-    .rank-number {
-      font-weight: 700;
-      color: #cbd5ff;
-    }
-
-    .player-name {
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .player-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 30px;
-      display: inline-block;
-    }
-
-    .kdr-high {
-      color: #6cf9b0;
-      font-weight: 700;
-    }
-
-    .tier-badge {
-      background: #232837;
-      padding: 4px 10px;
-      border-radius: 40px;
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-block;
-      text-align: center;
-      min-width: 48px;
-      letter-spacing: 0.5px;
-    }
-
+    .rank-table thead tr { background: #0f121bb3; }
+    .rank-table th { text-align: left; padding: 18px 20px; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.8px; color: #b3c7ff; background: #0a0c14; }
+    .rank-table td { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #eef2ff; font-size: 15px; }
+    .rank-table tbody tr:hover { background: rgba(79,172,254,0.08); }
+    .rank-number { font-weight: 700; color: #cbd5ff; }
+    .player-name { font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .player-avatar { width: 28px; height: 28px; border-radius: 30px; display: inline-block; }
+    .kdr-high { color: #6cf9b0; font-weight: 700; }
+    .tier-badge { background: #232837; padding: 4px 10px; border-radius: 40px; font-size: 12px; font-weight: 700; display: inline-block; text-align: center; min-width: 48px; letter-spacing: 0.5px; }
     .tier-S { background: #d4af37; color: #1e1a0c; box-shadow: 0 0 4px gold; }
     .tier-A { background: #4c9aff; color: white; }
     .tier-B { background: #2e7d64; color: white; }
     .tier-C { background: #7b5a3c; color: white; }
     .tier-D { background: #5a4a4a; color: #ddd; }
-
-    .loading-message, .error-message {
-      background: #11131c;
-      border-radius: 28px;
-      padding: 48px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .footer-note {
-      margin-top: 48px;
-      text-align: center;
-      font-size: 13px;
-      color: #6c6f85;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      padding-top: 28px;
-    }
-
+    .loading-message, .error-message { background: #11131c; border-radius: 28px; padding: 48px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .footer-note { margin-top: 48px; text-align: center; font-size: 13px; color: #6c6f85; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 28px; }
     @media (max-width: 750px) {
       .app-wrapper { padding: 0 20px 32px 20px; }
       .top-bar { flex-direction: column; align-items: flex-start; }
@@ -355,9 +129,7 @@
   </style>
 </head>
 <body>
-
 <canvas id="particles"></canvas>
-
 <div class="app-wrapper">
   <div class="top-bar">
     <div class="brand">
@@ -377,21 +149,17 @@
       </div>
     </div>
   </div>
-
   <div class="tabs-container" id="tabContainer"></div>
   <div class="leaderboard-panels" id="leaderboardRoot"></div>
   <div class="footer-note">
-    ⚡ Auto-sync every 60s | Overall tab is dynamically computed from all categories (kills+deaths aggregated) | CSV columns: tab, rank, player, kills, deaths, tier
+    ⚡ Auto-sync every 60s | Overall tab is dynamically computed from all categories | CSV columns: any of [tab, category, gamemode, type, server, mode] + player, kills, deaths (rank, tier optional)
   </div>
 </div>
 
 <script>
-  // ======================= CONFIG =======================
-  // 👇 REPLACE WITH YOUR GOOGLE SHEETS CSV PUBLISH LINK
+  // ========== YOUR GOOGLE SHEETS CSV URL ==========
   const CSV_SOURCE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Z8SzplonsR2NbZ20b6TazugXY4YjX3sMeIxGG_cXErabJUERRszTqoOX7RPAYQXnlfnwbQemEP7k/pub?output=csv";
-  // Auto-refresh interval (ms)
-  const AUTO_REFRESH_MS = 30000;
-  // ======================================================
+  const AUTO_REFRESH_MS = 60000;
 
   // Global state
   let currentActiveTabKey = null;
@@ -406,19 +174,13 @@
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
   }
 
   function getAvatarColor(name) {
     let hash = 0;
     for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
-    const hue = Math.abs(hash % 360);
-    return `hsl(${hue}, 65%, 48%)`;
+    return `hsl(${Math.abs(hash % 360)}, 65%, 48%)`;
   }
 
   function getTierClass(tierValue, kdr) {
@@ -444,9 +206,7 @@
   }
 
   function buildTableHTML(rows) {
-    if (!rows || rows.length === 0) {
-      return `<div class="loading-message" style="background:#0f1118;">✨ No players found for this category.</div>`;
-    }
+    if (!rows || rows.length === 0) return `<div class="loading-message" style="background:#0f1118;">✨ No players found for this category.</div>`;
     let html = `<div class="table-responsive"><table class="rank-table"><thead><tr>
       <th># RANK</th><th>PLAYER</th><th>KILLS</th><th>DEATHS</th><th>KDR</th><th>TIER</th>
     </tr></thead><tbody>`;
@@ -463,7 +223,7 @@
         <td><span class="tier-badge ${tierClass}">${escapeHtml(tierLabel)}</span></td>
       </tr>`;
     }
-    html += `</tbody>}</table></div>`;
+    html += `</tbody></table></div>`;
     return html;
   }
 
@@ -511,10 +271,7 @@
       btn.className = 'mctier-tab';
       btn.textContent = displayText;
       btn.setAttribute('data-tabkey', key);
-      btn.addEventListener('click', () => {
-        setActiveTab(key);
-        resetFilter();
-      });
+      btn.addEventListener('click', () => { setActiveTab(key); resetFilter(); });
       tabContainer.appendChild(btn);
       buttons.push(btn);
     }
@@ -527,8 +284,7 @@
   function setActiveTab(key) {
     if (tabButtons) {
       tabButtons.forEach(btn => {
-        const btnKey = btn.getAttribute('data-tabkey');
-        if (btnKey === key) btn.classList.add('active');
+        if (btn.getAttribute('data-tabkey') === key) btn.classList.add('active');
         else btn.classList.remove('active');
       });
     }
@@ -556,7 +312,7 @@
     }
   }
 
-  // CSV parser with quotes support
+  // CSV parser with quotes
   function parseCSV(csvText) {
     const rows = [];
     const lines = csvText.split(/\r?\n/);
@@ -568,18 +324,10 @@
       for (let i = 0; i < line.length; i++) {
         const ch = line[i];
         if (ch === '"') {
-          if (insideQuotes && line[i+1] === '"') {
-            field += '"';
-            i++;
-          } else {
-            insideQuotes = !insideQuotes;
-          }
-        } else if (ch === ',' && !insideQuotes) {
-          row.push(field.trim());
-          field = "";
-        } else {
-          field += ch;
-        }
+          if (insideQuotes && line[i+1] === '"') { field += '"'; i++; }
+          else insideQuotes = !insideQuotes;
+        } else if (ch === ',' && !insideQuotes) { row.push(field.trim()); field = ""; }
+        else field += ch;
       }
       row.push(field.trim());
       if (row.length > 1 || (row.length === 1 && row[0] !== "")) rows.push(row);
@@ -594,23 +342,29 @@
       headers.forEach((h, idx) => { obj[h] = row[idx] || ""; });
       result.push(obj);
     }
-    return result;
+    return { headers, data: result };
   }
 
-  // Compute overall tab from all category rows (aggregate kills/deaths per player)
+  // Find column name from a list of candidates
+  function findColumn(headers, candidates) {
+    for (const cand of candidates) {
+      const found = headers.find(h => h === cand.toLowerCase());
+      if (found) return found;
+    }
+    return null;
+  }
+
+  // Compute overall from all category groups
   function computeOverallFromCategories(categoryGroups) {
-    const playerMap = new Map(); // player -> { kills, deaths, bestTier? we'll use highest tier or from any row? keep first non-empty tier }
+    const playerMap = new Map();
     for (const [tabKey, rows] of categoryGroups.entries()) {
-      if (tabKey === 'overall') continue; // skip if any existing overall row (we override)
+      if (tabKey === 'overall') continue;
       for (const row of rows) {
         const name = row.player;
-        if (!playerMap.has(name)) {
-          playerMap.set(name, { kills: 0, deaths: 0, tier: row.tier || '' });
-        }
+        if (!playerMap.has(name)) playerMap.set(name, { kills: 0, deaths: 0, tier: row.tier || '' });
         const stats = playerMap.get(name);
         stats.kills += row.kills;
         stats.deaths += row.deaths;
-        // preserve first non-empty tier as representative (or you could choose best tier)
         if (!stats.tier && row.tier) stats.tier = row.tier;
         playerMap.set(name, stats);
       }
@@ -620,94 +374,82 @@
       const kills = stats.kills;
       const deaths = stats.deaths || 1;
       const kdr = kills / Math.max(1, deaths);
-      overallRows.push({
-        player: player,
-        kills: kills,
-        deaths: deaths,
-        kdr: kdr,
-        tier: stats.tier || '',
-        rank: 0 // temporary
-      });
+      overallRows.push({ player, kills, deaths, kdr, tier: stats.tier || '', rank: 0 });
     }
-    // sort by KDR descending, then kills
     overallRows.sort((a,b) => {
       if (a.kdr !== b.kdr) return b.kdr - a.kdr;
       return b.kills - a.kills;
     });
-    // assign ranks
     overallRows.forEach((row, idx) => { row.rank = idx + 1; });
     return overallRows;
   }
 
   async function fetchAndUpdateLeaderboard() {
-    if (!CSV_SOURCE_URL || CSV_SOURCE_URL === "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAMPLE_PUBLISH_CSV/pub?output=csv") {
-      leaderboardRoot.innerHTML = `<div class="error-message">
-        <strong>⚠️ CSV source not configured</strong><br><br>
-        Please set your Google Sheets CSV export link in the script:<br>
-        <code style="background:#1e1f2a; padding:6px 12px; border-radius:12px; display:inline-block; margin-top:8px;">const CSV_SOURCE_URL = "YOUR_PUBLISHED_CSV_LINK";</code>
-        <br><br>📌 Expected CSV columns: <strong>tab, rank, player, kills, deaths, tier</strong> (tier optional).<br>
-        <strong>🏆 Overall tab is computed automatically</strong> from all category rows.
-      </div>`;
-      tabContainer.innerHTML = `<div style="color:#8f9bb5;">Awaiting CSV configuration</div>`;
+    if (!CSV_SOURCE_URL) {
+      leaderboardRoot.innerHTML = `<div class="error-message">❌ CSV_SOURCE_URL is not defined.</div>`;
       return;
     }
     try {
       if (currentActiveTabKey && panelElements.has(currentActiveTabKey)) {
-        const panel = panelElements.get(currentActiveTabKey);
-        if (panel) panel.innerHTML = `<div class="loading-message">⟳ Syncing with Google Sheets...</div>`;
+        panelElements.get(currentActiveTabKey).innerHTML = `<div class="loading-message">⟳ Syncing with Google Sheets...</div>`;
       } else {
         leaderboardRoot.innerHTML = `<div class="loading-message">⟳ Fetching live leaderboard...</div>`;
       }
+
       const response = await fetch(CSV_SOURCE_URL, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const csvText = await response.text();
-      const parsed = parseCSV(csvText);
+      const { headers, data: parsed } = parseCSV(csvText);
       if (!parsed.length) throw new Error("CSV is empty or invalid format");
 
-      // Group by 'tab' column
+      // Detect required columns
+      const tabCol = findColumn(headers, ['tab', 'category', 'gamemode', 'type', 'server', 'mode']);
+      const playerCol = findColumn(headers, ['player', 'name', 'username']);
+      const killsCol = findColumn(headers, ['kills', 'kill']);
+      const deathsCol = findColumn(headers, ['deaths', 'death']);
+      const rankCol = findColumn(headers, ['rank', 'position']);
+      const tierCol = findColumn(headers, ['tier', 'rating', 'level']);
+
+      if (!playerCol) throw new Error(`Missing player/name column. Found headers: ${headers.join(', ')}`);
+      if (!killsCol) throw new Error(`Missing kills column. Found: ${headers.join(', ')}`);
+      if (!deathsCol) throw new Error(`Missing deaths column. Found: ${headers.join(', ')}`);
+      if (!tabCol) throw new Error(`No category column found. Please add a column named: tab, category, gamemode, type, server, or mode. Found headers: ${headers.join(', ')}`);
+
+      // Group by category
       const groups = new Map();
       for (const row of parsed) {
-        let tabKey = (row.tab || row.category || "").trim().toLowerCase();
-        if (!tabKey) continue;
-        const rankRaw = parseInt(row.rank, 10);
-        const killsRaw = parseInt(row.kills, 10) || 0;
-        const deathsRaw = parseInt(row.deaths, 10) || 1;
-        const kdr = killsRaw / Math.max(1, deathsRaw);
-        const playerName = (row.player || row.name || "Unknown").trim();
-        const tierValue = row.tier || "";
-        if (!groups.has(tabKey)) groups.set(tabKey, []);
-        groups.get(tabKey).push({
-          rank: rankRaw,
-          player: playerName,
-          kills: killsRaw,
-          deaths: deathsRaw,
-          kdr: kdr,
-          tier: tierValue
-        });
+        let tabValue = String(row[tabCol] || "uncategorized").trim().toLowerCase();
+        if (!tabValue) tabValue = "other";
+        const playerName = String(row[playerCol] || "Unknown").trim();
+        const kills = parseInt(row[killsCol], 10) || 0;
+        const deaths = parseInt(row[deathsCol], 10) || 1;
+        const kdr = kills / Math.max(1, deaths);
+        let rank = rankCol ? (parseInt(row[rankCol], 10) || 999) : 999;
+        const tier = tierCol ? String(row[tierCol] || "").trim() : "";
+        if (!groups.has(tabValue)) groups.set(tabValue, []);
+        groups.get(tabValue).push({ rank, player: playerName, kills, deaths, kdr, tier });
       }
-      if (groups.size === 0) throw new Error("No valid 'tab' column found. Ensure CSV has column named 'tab'");
 
       // Sort each group by rank
       for (let [key, rows] of groups.entries()) {
         rows.sort((a,b) => a.rank - b.rank);
+        // re-assign sequential ranks in case of missing rank numbers
+        rows.forEach((r, idx) => { r.rank = idx + 1; });
         groups.set(key, rows);
       }
 
-      // Compute OVERALL tab (aggregated from all categories, not synced from CSV)
+      // Compute overall from all categories
       const overallRows = computeOverallFromCategories(groups);
-      
-      // Prepare final tabsData: overall first, then all category groups
+
+      // Build final tabsData
       tabsData.clear();
-      // Add overall tab (display name "OVERALL")
       tabsData.set("overall", { displayName: "OVERALL", rows: overallRows });
-      
-      // Add other tabs (skip if any existing 'overall' tab from CSV to avoid duplication)
       for (let [key, rows] of groups.entries()) {
-        if (key === "overall") continue; // skip raw overall from CSV, we use computed one
+        if (key === "overall") continue;
         let displayName = key.charAt(0).toUpperCase() + key.slice(1);
         tabsData.set(key, { displayName, rows });
       }
-      
+
       const tabKeys = Array.from(tabsData.keys());
       initPanelsStructure(tabKeys);
       renderTabs();
@@ -721,10 +463,14 @@
         ❌ Failed to load/parse CSV.<br>
         URL: ${escapeHtml(CSV_SOURCE_URL)}<br>
         Error: ${escapeHtml(err.message)}<br><br>
-        Ensure CSV is published and contains columns: <strong>tab, rank, player, kills, deaths</strong> (tier optional).
-        <br><br>🏆 <strong>Overall tab is auto-generated</strong> from all category rows.
+        <strong>Make sure your Google Sheet is published as CSV</strong> and contains at least these columns:<br>
+        • a <strong>category column</strong> (named "tab", "category", "gamemode", "type", "server", or "mode")<br>
+        • a <strong>player name</strong> column ("player" or "name")<br>
+        • <strong>kills</strong> and <strong>deaths</strong> columns<br>
+        • optional: rank, tier<br><br>
+        <span style="color:#aaa;">Detected headers: ${escapeHtml(headers?.join(', ') || 'unknown')}</span>
       </div>`;
-      tabContainer.innerHTML = `<div style="color:#b77c7c;">⚠️ Data error — check console & CSV format</div>`;
+      tabContainer.innerHTML = `<div style="color:#b77c7c;">⚠️ Column mismatch — see details below</div>`;
     }
   }
 
@@ -735,11 +481,9 @@
   }
 
   function bindSearch() {
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        if (currentActiveTabKey) filterCurrentTable(e.target.value);
-      });
-    }
+    if (searchInput) searchInput.addEventListener('input', (e) => {
+      if (currentActiveTabKey) filterCurrentTable(e.target.value);
+    });
   }
 
   function bindCopyIP() {
@@ -765,25 +509,18 @@
     }
   }
 
-  // ========== PARTICLE BACKGROUND ==========
+  // Particles background
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
   let starsArray = [];
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   function initStars() {
     starsArray = [];
-    const starCount = 140;
-    for (let i = 0; i < starCount; i++) {
+    for (let i = 0; i < 140; i++) {
       starsArray.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2.5 + 0.7,
-        alpha: Math.random() * 0.7 + 0.2,
-        delta: Math.random() * 0.01 + 0.002,
-        direction: Math.random() > 0.5 ? 1 : -1
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        size: Math.random() * 2.5 + 0.7, alpha: Math.random() * 0.7 + 0.2,
+        delta: Math.random() * 0.01 + 0.002, direction: Math.random() > 0.5 ? 1 : -1
       });
     }
   }
@@ -800,11 +537,8 @@
     requestAnimationFrame(drawStars);
   }
   window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
-  resizeCanvas();
-  initStars();
-  drawStars();
+  resizeCanvas(); initStars(); drawStars();
 
-  // ========== INIT ==========
   async function init() {
     bindSearch();
     bindCopyIP();
