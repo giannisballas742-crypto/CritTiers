@@ -201,39 +201,6 @@
     color: #a0aec0;
     flex-shrink: 0;
   }
-  .tier-header {
-    font-weight: 800;
-    padding: 6px 20px;
-    border-radius: 40px;
-    margin-bottom: 12px;
-    display: inline-block;
-    cursor: help;
-    font-size: 1.2rem;
-  }
-  [data-tooltip] { position: relative; cursor: help; }
-  [data-tooltip]::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 130%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #0b0f1c;
-    color: #ffecb3;
-    padding: 8px 14px;
-    border-radius: 18px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    border: 1px solid #3b82f6;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    backdrop-filter: blur(2px);
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.18s;
-  }
-  [data-tooltip]:hover::after { opacity: 1; }
-
   .mode-icons {
     display: flex;
     gap: 10px;
@@ -345,6 +312,7 @@
 </div>
 
 <script>
+  // NEW CSV URL
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQm8-1rFiM_NhzXsNqWuirSOx8OlbfERAHXOURGsw3Q-S2WONa7ox73AnGTWqPxLMJSdeKFrieBe4Ph/pub?output=csv";
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "Total", regionCol = "__region";
@@ -538,44 +506,58 @@
         </div>`;
       });
     } else {
-      // Mode-specific tab: MCTiers list style
-      const groups = {};
-      allRows.forEach(r => {
-        const name = r[nameCol];
-        if(!name) return;
-        let raw = null;
+      // Mode-specific tab: flat list sorted by Total points, MCTiers style
+      // Collect players that have a tier in this mode
+      const modePlayers = [];
+      for (const r of allRows) {
+        let rawTier = null;
         for (let key in r) {
-          if (key.toLowerCase() === mode.toLowerCase()) { raw = r[key]; break; }
+          if (key.toLowerCase() === mode.toLowerCase()) { rawTier = r[key]; break; }
         }
-        if (!raw) return;
-        const baseTier = extractBaseTierFromCode(raw);
-        if (!baseTier) return;
-        if(!groups[baseTier]) groups[baseTier]=[];
-        groups[baseTier].push(r);
-      });
-      tierOrder.forEach(tier => {
-        if(!groups[tier]) return;
-        const pointsValue = tierPointsMap[tier] || "?";
-        htmlOut += `<div class="mb-6"><div class="tier-header" style="background:${tierColors[tier]}" data-tooltip="${tier} → ${pointsValue} points">${tier}</div>`;
-        groups[tier].forEach(r => {
-          const name = r[nameCol];
-          const region = r[regionCol];
-          const pointsVal = parseFloat(r[pointsCol]||0);
-          const initial = getInitial(name);
-          let regionHTML = "";
-          if(region) {
-            let rc = ""; const reg = region.toUpperCase().trim();
-            if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
-            regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
-          }
-          htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${r.overallRank || 999}">
-            <div class="player-avatar">${initial}</div>
-            <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(pointsVal, false)}</div>
-            <div class="font-mono text-sm ml-auto text-blue-300">${r[pointsCol] || 0} pts</div>
-          </div>`;
+        if (!rawTier) continue;
+        const parsed = parseTierString(rawTier);
+        if (!parsed) continue;
+        modePlayers.push({
+          player: r,
+          rawTier: rawTier,
+          displayTier: parsed.display,
+          baseTier: parsed.baseTier,
+          points: parseFloat(r[pointsCol] || 0)
         });
-        htmlOut += `</div>`;
-      });
+      }
+      // Sort by points descending
+      modePlayers.sort((a,b) => b.points - a.points);
+      // Assign ranks
+      modePlayers.forEach((p, idx) => { p.rank = idx + 1; });
+      // Build HTML
+      for (const p of modePlayers) {
+        const r = p.player;
+        const name = r[nameCol];
+        const rank = p.rank;
+        const pointsVal = p.points;
+        const region = r[regionCol];
+        const initial = getInitial(name);
+        let regionHTML = "";
+        if(region) {
+          let rc = ""; const reg = region.toUpperCase().trim();
+          if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
+          regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
+        }
+        const tierColor = tierColors[p.baseTier] || "#666";
+        htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${r.overallRank || 999}">
+          <div class="player-avatar">${initial}</div>
+          <div class="flex-1">
+            <div class="flex items-center flex-wrap gap-2"><span class="font-bold text-lg">${rank}.</span> <span class="font-semibold">${name}</span>${regionHTML}</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="tier-header" style="background:${tierColor}; padding:4px 12px; font-size:0.9rem;" data-tooltip="${p.baseTier} → ${tierPointsMap[p.baseTier]} pts">${p.displayTier}</div>
+            <div class="font-mono text-lg font-bold text-blue-400">${pointsVal} <span class="text-sm">pts</span></div>
+          </div>
+        </div>`;
+      }
+      if (modePlayers.length === 0) {
+        htmlOut = `<div class="text-center text-gray-400 py-10">No players found for this mode.</div>`;
+      }
     }
     document.getElementById("rankings").innerHTML = htmlOut;
 
