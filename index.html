@@ -452,8 +452,7 @@
     margin-top: 4px;
   }
 
-  /* ===== OVERALL TAB: POINTS IN A STRAIGHT LINE ===== */
-  /* Fixed width for points box, consistent alignment, mode icons start at same position */
+  /* ===== OVERALL TAB: POINTS IN A STRAIGHT LINE & CENTER-ALIGNED ===== */
   .player-card .overall-right {
     display: flex;
     align-items: center;
@@ -462,7 +461,7 @@
   }
   .player-card .points-box {
     width: 110px;            /* fixed width ensures all points numbers align vertically */
-    text-align: right;
+    text-align: center;      /* center the points text horizontally */
     flex-shrink: 0;
     background: #0f111a;
     padding: 6px 14px;
@@ -480,7 +479,7 @@
       justify-content: space-between;
     }
     .player-card .points-box {
-      text-align: left;
+      text-align: center;
       width: auto;
       min-width: 100px;
     }
