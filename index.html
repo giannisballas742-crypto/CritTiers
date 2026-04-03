@@ -13,82 +13,91 @@ body {
     color: white;
 }
 
-/* Top bar */
+/* TOP BAR */
 .topbar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
+    align-items: flex-start;
+    padding: 30px 40px 10px 40px;
 }
 
-/* Left side */
+/* LEFT */
 .left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 10px; /* move down slightly */
 }
 
 .left img {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
 }
 
 .title {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
 }
 
-/* Right side */
+/* RIGHT */
 .right {
     text-align: right;
 }
 
 .search {
-    padding: 8px;
+    padding: 8px 12px;
     border-radius: 6px;
     border: none;
     outline: none;
 }
 
-.discord-btn {
-    margin-top: 8px;
-    padding: 8px 15px;
-    background: #5865F2;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-}
-
-.discord-btn:hover {
-    background: #4752c4;
-}
-
-.server-ip {
-    margin-top: 8px;
+.server-box {
+    margin-top: 10px;
+    background: #222;
+    padding: 8px 12px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 14px;
 }
 
-/* Tabs */
+.server-ip {
+    background: #111;
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+
+/* TABS */
 .tabs {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin: 20px 0;
+    gap: 15px;
+    padding: 10px 40px;
+    overflow-x: auto;
 }
 
 .tab {
-    padding: 10px 20px;
-    background: #444;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: #2c2c2c;
+    border-radius: 20px;
     cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+    border: 1px solid transparent;
+}
+
+.tab:hover {
+    background: #3a3a3a;
 }
 
 .tab.active {
-    background: #222;
+    border-bottom: 2px solid white;
 }
+
 </style>
 </head>
 
@@ -107,31 +116,24 @@ body {
     <div class="right">
         <input type="text" class="search" placeholder="Search players...">
 
-        <br>
-
-        <button class="discord-btn" onclick="joinDiscord()">
-            Join Discord
-        </button>
-
-        <div class="server-ip">
-            Server IP: <strong>CritTiers.xyz</strong>
+        <div class="server-box">
+            <span>SERVER IP</span>
+            <div class="server-ip">CritTiers.xyz</div>
         </div>
     </div>
-
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-    <div class="tab active">Overall</div>
-    <div class="tab">Spearmace</div>
-    <div class="tab">MaceCart</div>
-    <div class="tab">Modern</div>
-    <div class="tab">DSMP Mace</div>
-    <div class="tab">NethSMP</div>
+    <div class="tab active">🏆 Overall</div>
+    <div class="tab">⚔️ Spearmace</div>
+    <div class="tab">🛒 MaceCart</div>
+    <div class="tab">🧪 Modern</div>
+    <div class="tab">❤️ DSMP Mace</div>
+    <div class="tab">🌍 NethSMP</div>
 </div>
 
 <script>
-// Tab switching (visual)
 const tabs = document.querySelectorAll(".tab");
 
 tabs.forEach(tab => {
@@ -140,11 +142,6 @@ tabs.forEach(tab => {
         tab.classList.add("active");
     };
 });
-
-// Discord button
-function joinDiscord() {
-    window.open("https://discord.gg/2P7QJDgDh", "_blank");
-}
 </script>
 
 </body>
