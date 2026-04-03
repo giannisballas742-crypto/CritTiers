@@ -9,9 +9,11 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #808080;
     color: white;
     overflow-x: hidden;
+
+    /* 🔥 GRADIENT BACKGROUND */
+    background: linear-gradient(135deg, #6e6e6e, #3f3f3f, #2a2a2a);
 }
 
 /* PARTICLES */
@@ -64,44 +66,43 @@ body {
 /* SERVER BOX */
 .server-box {
     margin-top: 10px;
-    background: #222;
+    background: #1a1a1a;
     padding: 8px 12px;
     border-radius: 10px;
     display: inline-flex;
     align-items: center;
     gap: 10px;
     font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .server-ip {
-    background: #111;
+    background: #0f0f0f;
     padding: 5px 10px;
     border-radius: 6px;
 }
 
-/* TABS (NEW STYLE) */
+/* TABS */
 .tabs {
     display: flex;
     gap: 25px;
     padding: 10px 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
 }
 
 .tab {
     padding: 10px 5px;
     cursor: pointer;
     position: relative;
-    color: #ddd;
+    color: #ccc;
     font-weight: 500;
     transition: 0.2s;
 }
 
-/* Hover */
 .tab:hover {
     color: white;
 }
 
-/* Active underline + glow */
 .tab.active {
     color: white;
 }
@@ -117,8 +118,6 @@ body {
     box-shadow: 0 0 10px #00f2fe;
     border-radius: 2px;
 }
-
-/* PARTICLES */
 </style>
 </head>
 
@@ -172,13 +171,13 @@ canvas.height = window.innerHeight;
 
 let particles = [];
 
-for (let i = 0; i < 80; i++) {
+for (let i = 0; i < 100; i++) {
     particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         r: Math.random() * 2,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4
     });
 }
 
@@ -188,7 +187,7 @@ function animate() {
     particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
         ctx.fill();
 
         p.x += p.dx;
