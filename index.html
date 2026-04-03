@@ -137,7 +137,6 @@
     position: relative;
     overflow: hidden;
   }
-  /* Fancy banners for top 3 */
   .player-card.gold-banner {
     background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
     border-left: 4px solid #ffd700;
@@ -151,16 +150,6 @@
     font-size: 28px;
     opacity: 0.2;
     transform: rotate(15deg);
-    pointer-events: none;
-  }
-  .player-card.gold-banner::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at 30% 50%, rgba(255,215,0,0.08), transparent 70%);
     pointer-events: none;
   }
   .player-card.silver-banner {
@@ -281,6 +270,7 @@
     min-width: 38px;
   }
 
+  /* Role badges (based on points, not rank) */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -355,22 +345,42 @@
 </div>
 
 <script>
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQm8-1rFiM_NhzXsNqWuirSOx8OlbfERAHXOURGsw3Q-S2WONa7ox73AnGTWqPxLMJSdeKFrieBe4Ph/pub?output=csv";
-  const REGION_COLUMN_INDEX = 2;
-  let allRows = [], nameCol = "", pointsCol = "", regionCol = "__region";
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Z8SzplonsR2NbZ20b6TazugXY4YjX3sMeIxGG_cXErabJUERRszTqoOX7RPAYQXnlfnwbQemEP7k/pub?output=csv";
+  const REGION_COLUMN_INDEX = 2; // Column index for region (0-based)
+  let allRows = [], nameCol = "", pointsCol = "Total", regionCol = "__region";
 
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
   const MODE_NAMES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
-  // Case‑insensitive column matching
+
+  // ---- Role assignment based on Total points (not rank) ----
+  function getRoleByPoints(points) {
+    const pts = parseFloat(points);
+    if (isNaN(pts)) return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
+    if (pts >= 100) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
+    if (pts >= 50) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
+    if (pts >= 25) return { name: "CritTiers Specialist", icon: "<i class='fas fa-star'></i>", className: "specialist", symbol: "✨" };
+    if (pts >= 10) return { name: "CritTiers Cadet", icon: "<i class='fas fa-user-graduate'></i>", className: "cadet", symbol: "🎓" };
+    if (pts >= 5) return { name: "CritTiers Novice", icon: "<i class='fas fa-feather-alt'></i>", className: "novice", symbol: "🌱" };
+    return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
+  }
+
+  function getRankBadge(points, large = false) {
+    const r = getRoleByPoints(points);
+    const cls = large ? `rank ${r.className} rank-large` : `rank ${r.className}`;
+    return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
+  }
+
+  function getInitial(name) { return name ? name.charAt(0).toUpperCase() : "?"; }
+
+  // ---- Case‑insensitive column matching for mode tiers ----
   function findModeColumn(player, modeName) {
     const lowerMode = modeName.toLowerCase();
     for (let key in player) {
       if (key.toLowerCase() === lowerMode) return key;
     }
-    // also try without spaces (e.g., "DSMPMace")
     const noSpace = modeName.replace(/\s/g, '');
     for (let key in player) {
       if (key.toLowerCase() === noSpace.toLowerCase()) return key;
@@ -408,22 +418,6 @@
     if (!baseTier) return null;
     return { display: upper, baseTier: baseTier, peakTier: null };
   }
-
-  function getRoleByRank(rank) {
-    if (rank <= 3) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
-    if (rank <= 28) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
-    if (rank <= 63) return { name: "CritTiers Specialist", icon: "<i class='fas fa-star'></i>", className: "specialist", symbol: "✨" };
-    if (rank <= 163) return { name: "CritTiers Cadet", icon: "<i class='fas fa-user-graduate'></i>", className: "cadet", symbol: "🎓" };
-    if (rank <= 463) return { name: "CritTiers Novice", icon: "<i class='fas fa-feather-alt'></i>", className: "novice", symbol: "🌱" };
-    return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
-  }
-  function getRankBadge(rank, large = false) {
-    const r = getRoleByRank(rank);
-    const cls = large ? `rank ${r.className} rank-large` : `rank ${r.className}`;
-    return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
-  }
-
-  function getInitial(name) { return name ? name.charAt(0).toUpperCase() : "?"; }
 
   function parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(l=>l.trim());
@@ -468,9 +462,13 @@
     const text = await res.text();
     const { headers, data } = parseCSV(text);
     allRows = data;
+    // Find name column (case‑insensitive)
     nameCol = headers.find(h=>/name|player/i.test(h)) || headers[0];
-    pointsCol = headers.find(h=>/points/i.test(h)) || headers[1];
+    // Explicitly look for "Total" column (case‑insensitive) for points
+    const totalCol = headers.find(h=>h.toLowerCase() === "total");
+    pointsCol = totalCol ? totalCol : (headers.find(h=>/points/i.test(h)) || headers[1]);
     
+    // Sort by Total points descending for Overall tab
     const sortedByPoints = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
     sortedByPoints.forEach((player, idx) => { player.overallRank = idx + 1; });
     
@@ -533,15 +531,14 @@
             ${getModeIconsHTML(r)}
           </div>
           <div class="text-right flex flex-col items-end gap-1">
-            ${getRankBadge(rank, true)}
+            ${getRankBadge(pointsVal, true)}
             <div class="font-mono text-xl font-bold text-blue-400">${r[pointsCol]} <span class="text-sm">pts</span></div>
           </div>
         </div>`;
       });
     } else {
-      // For specific mode tab, group by tier using the exact column (case-insensitive)
+      // For specific mode tab, group by tier using exact column (case‑insensitive)
       const groups = {};
-      const modeCol = findModeColumn({}, mode) || mode; // fallback
       allRows.forEach(r => {
         const name = r[nameCol];
         if(!name) return;
@@ -563,7 +560,6 @@
           const name = r[nameCol];
           const region = r[regionCol];
           const pointsVal = parseFloat(r[pointsCol]||0);
-          const overallRank = r.overallRank || 999;
           const initial = getInitial(name);
           let regionHTML = "";
           if(region) {
@@ -571,9 +567,9 @@
             if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
             regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
           }
-          htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${overallRank}">
+          htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${r.overallRank || 999}">
             <div class="player-avatar">${initial}</div>
-            <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(overallRank, false)}</div>
+            <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(pointsVal, false)}</div>
             <div class="font-mono text-sm ml-auto text-blue-300">${r[pointsCol] || 0} pts</div>
           </div>`;
         });
@@ -597,7 +593,7 @@
         }
         let modalHtml = `<div class="flex justify-center mb-4"><div class="player-avatar" style="width:100px;height:100px;font-size:42px;border-width:3px;">${initial}</div></div>
         <h2 class="text-2xl font-bold text-center">${p[nameCol]} ${regionInline}</h2>
-        <div class="flex justify-center mt-3">${getRankBadge(overallRank, true)}</div>
+        <div class="flex justify-center mt-3">${getRankBadge(pointsVal, true)}</div>
         <div class="mt-6">${getModeIconsHTML(p)}</div>
         <div class="text-center mt-4"><span class="text-gray-400">Overall Rank:</span> <span class="text-xl font-bold text-yellow-400">#${overallRank}</span></div>
         <div class="text-center mt-2 border-t border-gray-600 pt-3"><span class="text-gray-400">Total Points:</span> <span class="text-2xl font-bold text-blue-400">${p[pointsCol]}</span></div>`;
