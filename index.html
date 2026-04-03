@@ -17,7 +17,7 @@
     overflow-x: hidden;
     min-height: 100vh;
   }
-  /* Star particles (white, subtle) */
+  /* Star particles (white) */
   #particles {
     position: fixed;
     top: 0;
@@ -42,68 +42,85 @@
     100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
   }
 
-  /* ---- CRITTIERS TOP BAR (blue accent) ---- */
+  /* ---- CRITTIERS TOP BAR (tighter, moved slightly) ---- */
   .top-bar {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 24px;
-    padding: 28px 0 20px 0;
+    gap: 20px;
+    padding: 12px 0 16px 0;   /* reduced top padding */
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 20px;
   }
-  .brand { display: flex; align-items: center; gap: 16px; }
+  .brand { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    margin-left: -8px;  /* shift left a tiny bit */
+  }
   .brand-logo {
-    width: 54px; height: 54px; border-radius: 14px;
+    width: 48px; height: 48px; border-radius: 12px;
     background: #11141c; object-fit: cover;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
   }
   .brand-name {
-    font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
+    font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
     background: linear-gradient(135deg, #ffffff, #7cb8ff);
     background-clip: text; -webkit-background-clip: text; color: transparent;
   }
-  .right-panel { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-  .search-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .right-panel { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-end; 
+    gap: 8px; 
+    margin-top: -4px; /* nudge up slightly */
+  }
+  .search-area { 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    justify-content: flex-end; 
+  }
   .search-input {
-    background: #12141c; border: 1px solid #2a2e3a; padding: 10px 16px;
-    border-radius: 40px; width: 240px; font-family: 'Inter', monospace;
-    font-size: 14px; color: #f0f3fa; outline: none;
+    background: #12141c; border: 1px solid #2a2e3a; padding: 8px 14px;
+    border-radius: 40px; width: 220px; font-family: 'Inter', monospace;
+    font-size: 13px; color: #f0f3fa; outline: none;
   }
   .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
   .discord-btn {
-    background: #5865F2; padding: 8px 18px; border-radius: 40px;
-    font-weight: 600; font-size: 14px; color: white;
-    display: inline-flex; align-items: center; gap: 8px;
+    background: #5865F2; padding: 7px 16px; border-radius: 40px;
+    font-weight: 600; font-size: 13px; color: white;
+    display: inline-flex; align-items: center; gap: 6px;
     transition: 0.2s; text-decoration: none;
   }
   .discord-btn:hover { background: #4752c4; transform: scale(1.02); }
   .server-card {
     background: #0f1118; border: 1px solid #262b36; border-radius: 48px;
-    padding: 6px 12px 6px 20px; display: flex; align-items: center; gap: 16px;
+    padding: 4px 10px 4px 16px; display: flex; align-items: center; gap: 12px;
     backdrop-filter: blur(2px);
   }
-  .server-label { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; color: #8f9bb5; }
-  .ip-address { background: #1a1d26; padding: 6px 14px; border-radius: 32px; font-family: monospace; font-weight: 500; font-size: 15px; color: #a3c6ff; }
-  .copy-ip-btn { background: #2b2f3e; border: none; color: white; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 40px; cursor: pointer; transition: 0.2s; }
+  .server-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; color: #8f9bb5; }
+  .ip-address { background: #1a1d26; padding: 4px 10px; border-radius: 32px; font-family: monospace; font-weight: 500; font-size: 13px; color: #a3c6ff; }
+  .copy-ip-btn { background: #2b2f3e; border: none; color: white; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 40px; cursor: pointer; transition: 0.2s; }
   .copy-ip-btn:hover { background: #3f4458; }
-  .copy-feedback { font-size: 12px; color: #6cfe9e; margin-left: 6px; }
+  .copy-feedback { font-size: 11px; color: #6cfe9e; margin-left: 4px; }
 
   /* TABS (blue underline & glow) */
   .tabs-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding-bottom: 0;
-    margin-top: 16px;
+    margin-top: 12px;
   }
   .mctier-tab {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.3px;
-    padding: 12px 18px;
+    padding: 10px 16px;
     cursor: pointer;
     transition: all 0.2s;
     color: #a9b3cf;
@@ -189,7 +206,7 @@
   }
   [data-tooltip]:hover::after { opacity: 1; }
 
-  /* mode icons (colored circles) */
+  /* mode icons */
   .mode-icons {
     display: flex;
     gap: 10px;
@@ -226,7 +243,7 @@
     min-width: 38px;
   }
 
-  /* rank badges (unchanged) */
+  /* rank badges */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -257,20 +274,27 @@
   .modal-close { cursor:pointer; float:right; font-size:1.8rem; line-height:1; color:#aaa; }
   .modal-close:hover { color:#3b82f6; }
 
+  /* reduce outer container padding to bring everything closer to edges */
+  .main-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
   @media (max-width: 700px) {
     .top-bar { flex-direction: column; align-items: flex-start; }
     .right-panel { align-items: stretch; width: 100%; }
     .search-input { width: 100%; }
     .player-card { flex-wrap: wrap; }
+    .main-container { padding: 0 16px; }
   }
 </style>
 </head>
 <body>
 <div id="particles"></div>
-<div class="max-w-6xl mx-auto p-5 relative z-10">
+<div class="main-container">
   <div class="top-bar">
     <div class="brand">
-      <img class="brand-logo" src="https://i.ibb.co/3bHWyM6/image.png" alt="CritTiers" onerror="this.src='https://via.placeholder.com/54?text=CT'">
+      <img class="brand-logo" src="https://i.ibb.co/3bHWyM6/image.png" alt="CritTiers" onerror="this.src='https://via.placeholder.com/48?text=CT'">
       <span class="brand-name">CritTiers</span>
     </div>
     <div class="right-panel">
@@ -305,12 +329,11 @@
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "", regionCol = "__region";
 
-  // Tier mapping (unchanged)
+  // Tier mapping
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
-  // NEW MODE LIST
   const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
   const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
 
@@ -550,7 +573,7 @@
   // Modal close
   document.getElementById("modal-close").onclick = () => document.getElementById("player-modal").classList.add("hidden");
 
-  // Star particles (white)
+  // Star particles
   function createParticles() {
     const container = document.getElementById('particles');
     for (let i = 0; i < 180; i++) {
