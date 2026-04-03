@@ -354,7 +354,6 @@
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
   const MODE_NAMES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
-  // Mapping for short labels inside circles
   const MODE_SHORT_LABELS = {
     "Spearmace": "SPEAR",
     "MaceCart": "CART",
@@ -539,6 +538,7 @@
         </div>`;
       });
     } else {
+      // Mode-specific tab: MCTiers list style
       const groups = {};
       allRows.forEach(r => {
         const name = r[nameCol];
