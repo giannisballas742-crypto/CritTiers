@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>CritTiers · Dynamic Mace Leaderboards</title>
-  <!-- Google Fonts: clean MCTiers style -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <title>CritTiers · Mace Leaderboards (Auto CSV)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -14,7 +13,7 @@
     }
 
     body {
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: #0b0d12;
       color: #eef2ff;
       overflow-x: hidden;
@@ -179,7 +178,7 @@
       margin-left: 6px;
     }
 
-    /* dynamic tabs (MCTiers style) */
+    /* MCTiers tabs */
     .tabs-container {
       margin-top: 28px;
       display: flex;
@@ -379,41 +378,32 @@
     </div>
   </div>
 
-  <!-- dynamic tabs container -->
   <div class="tabs-container" id="tabContainer"></div>
-
-  <!-- leaderboard panels container -->
   <div class="leaderboard-panels" id="leaderboardRoot"></div>
   <div class="footer-note">
-    ⚡ Auto-sync every 60s from Google Sheets CSV | Tiers based on region / performance
+    ⚡ Auto-sync every 60s | Overall tab is dynamically computed from all categories (kills+deaths aggregated) | CSV columns: tab, rank, player, kills, deaths, tier
   </div>
 </div>
 
 <script>
-  // ======================= CONFIGURATION =======================
-  // 🔁 REPLACE THIS URL WITH YOUR GOOGLE SHEETS CSV EXPORT LINK
-  // Example format (File → Publish to web → CSV):
-  // "https://docs.google.com/spreadsheets/d/e/2PACX-1vXXXXXX/pub?output=csv"
+  // ======================= CONFIG =======================
+  // 👇 REPLACE WITH YOUR GOOGLE SHEETS CSV PUBLISH LINK
   const CSV_SOURCE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAMPLE_PUBLISH_CSV/pub?output=csv";
-  // If no URL is provided, a demo placeholder will be shown.
-  // ==============================================================
-
-  // Auto-refresh interval (milliseconds) = 60 seconds
+  // Auto-refresh interval (ms)
   const AUTO_REFRESH_MS = 60000;
+  // ======================================================
 
   // Global state
   let currentActiveTabKey = null;
   let tabsData = new Map();     // key -> { displayName, rows: [] }
-  let panelElements = new Map(); // key -> panel DOM
-  let tabButtons = [];           // store button refs
+  let panelElements = new Map();
+  let tabButtons = [];
 
-  // DOM elements
   const tabContainer = document.getElementById('tabContainer');
   const leaderboardRoot = document.getElementById('leaderboardRoot');
   const searchInput = document.getElementById('globalSearch');
   const refreshBtn = document.getElementById('manualRefreshBtn');
 
-  // Helper: escape HTML
   function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -424,7 +414,6 @@
     });
   }
 
-  // generate avatar color based on player name
   function getAvatarColor(name) {
     let hash = 0;
     for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
@@ -432,14 +421,12 @@
     return `hsl(${hue}, 65%, 48%)`;
   }
 
-  // determine tier class from CSV column 'tier' or fallback to KDR-based
   function getTierClass(tierValue, kdr) {
     if (tierValue && typeof tierValue === 'string') {
       const upper = tierValue.trim().toUpperCase();
       if (['S','A','B','C','D'].includes(upper)) return `tier-${upper}`;
       return 'tier-B';
     }
-    // fallback: auto tier based on KDR
     if (kdr >= 2.8) return 'tier-S';
     if (kdr >= 2.2) return 'tier-A';
     if (kdr >= 1.6) return 'tier-B';
@@ -456,10 +443,9 @@
     return 'D';
   }
 
-  // Build HTML table for given rows array
   function buildTableHTML(rows) {
     if (!rows || rows.length === 0) {
-      return `<div class="loading-message" style="background:#0f1118;">✨ No players found for this category. Sync data via CSV.</div>`;
+      return `<div class="loading-message" style="background:#0f1118;">✨ No players found for this category.</div>`;
     }
     let html = `<div class="table-responsive"><table class="rank-table"><thead><tr>
       <th># RANK</th><th>PLAYER</th><th>KILLS</th><th>DEATHS</th><th>KDR</th><th>TIER</th>
@@ -477,22 +463,16 @@
         <td><span class="tier-badge ${tierClass}">${escapeHtml(tierLabel)}</span></td>
       </tr>`;
     }
-    html += `</tbody></table></div>`;
+    html += `</tbody>}</table></div>`;
     return html;
   }
 
-  // filter active panel by search term
   function filterCurrentTable(searchTerm) {
     if (!currentActiveTabKey) return;
     const tabInfo = tabsData.get(currentActiveTabKey);
     if (!tabInfo) return;
     const term = searchTerm.trim().toLowerCase();
-    let filteredRows = [];
-    if (term === "") {
-      filteredRows = tabInfo.rows;
-    } else {
-      filteredRows = tabInfo.rows.filter(r => r.player.toLowerCase().includes(term));
-    }
+    let filteredRows = term === "" ? tabInfo.rows : tabInfo.rows.filter(r => r.player.toLowerCase().includes(term));
     const panel = panelElements.get(currentActiveTabKey);
     if (panel) {
       if (filteredRows.length === 0 && term !== "") {
@@ -503,7 +483,6 @@
     }
   }
 
-  // reset filter (clear search input)
   function resetFilter() {
     if (searchInput) searchInput.value = '';
     if (currentActiveTabKey) {
@@ -513,22 +492,21 @@
     }
   }
 
-  // render tabs dynamically based on parsed data (preserve emoji only for "overall" case-insensitive)
   function renderTabs() {
     tabContainer.innerHTML = '';
-    const sortedKeys = Array.from(tabsData.keys()).sort();
+    const sortedKeys = Array.from(tabsData.keys()).sort((a,b) => {
+      if (a === 'overall') return -1;
+      if (b === 'overall') return 1;
+      return a.localeCompare(b);
+    });
     if (sortedKeys.length === 0) {
       tabContainer.innerHTML = `<div style="color:#8f9bb5; padding:12px;">No categories loaded — check CSV link</div>`;
       return;
     }
     const buttons = [];
     for (const key of sortedKeys) {
-      const displayBase = tabsData.get(key).displayName || key;
-      let displayText = displayBase.toUpperCase();
-      // 🏆 emoji only for tab that represents "overall" (case-insensitive)
-      if (key.toLowerCase() === 'overall' || displayBase.toLowerCase() === 'overall') {
-        displayText = `🏆 ${displayText}`;
-      }
+      let displayText = tabsData.get(key).displayName.toUpperCase();
+      if (key === 'overall') displayText = `🏆 ${displayText}`;
       const btn = document.createElement('button');
       btn.className = 'mctier-tab';
       btn.textContent = displayText;
@@ -541,18 +519,12 @@
       buttons.push(btn);
     }
     tabButtons = buttons;
-    // activate first tab by default
-    if (sortedKeys.length > 0 && !currentActiveTabKey) {
-      setActiveTab(sortedKeys[0]);
-    } else if (currentActiveTabKey && tabsData.has(currentActiveTabKey)) {
-      setActiveTab(currentActiveTabKey);
-    } else if (sortedKeys.length > 0) {
-      setActiveTab(sortedKeys[0]);
-    }
+    if (sortedKeys.length > 0 && !currentActiveTabKey) setActiveTab(sortedKeys[0]);
+    else if (currentActiveTabKey && tabsData.has(currentActiveTabKey)) setActiveTab(currentActiveTabKey);
+    else if (sortedKeys.length > 0) setActiveTab(sortedKeys[0]);
   }
 
   function setActiveTab(key) {
-    // update button active style
     if (tabButtons) {
       tabButtons.forEach(btn => {
         const btnKey = btn.getAttribute('data-tabkey');
@@ -560,22 +532,17 @@
         else btn.classList.remove('active');
       });
     }
-    // hide all panels, show selected
     for (let [k, panel] of panelElements.entries()) {
       if (k === key) panel.classList.add('active-panel');
       else panel.classList.remove('active-panel');
     }
     currentActiveTabKey = key;
-    // refresh content in case of filter reset
     const tabInfo = tabsData.get(key);
     const panel = panelElements.get(key);
-    if (panel && tabInfo) {
-      panel.innerHTML = buildTableHTML(tabInfo.rows);
-    }
+    if (panel && tabInfo) panel.innerHTML = buildTableHTML(tabInfo.rows);
     if (searchInput) searchInput.value = '';
   }
 
-  // create empty panels for each tab key
   function initPanelsStructure(keys) {
     leaderboardRoot.innerHTML = '';
     panelElements.clear();
@@ -589,13 +556,9 @@
     }
   }
 
-  // robust CSV parser (supports quotes, commas inside fields)
+  // CSV parser with quotes support
   function parseCSV(csvText) {
     const rows = [];
-    const regex = /(?:,|^)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
-    let currentRow = [];
-    let match = null;
-    let lastIndex = 0;
     const lines = csvText.split(/\r?\n/);
     for (let line of lines) {
       if (line.trim() === "") continue;
@@ -634,27 +597,66 @@
     return result;
   }
 
-  // fetch and update from CSV
+  // Compute overall tab from all category rows (aggregate kills/deaths per player)
+  function computeOverallFromCategories(categoryGroups) {
+    const playerMap = new Map(); // player -> { kills, deaths, bestTier? we'll use highest tier or from any row? keep first non-empty tier }
+    for (const [tabKey, rows] of categoryGroups.entries()) {
+      if (tabKey === 'overall') continue; // skip if any existing overall row (we override)
+      for (const row of rows) {
+        const name = row.player;
+        if (!playerMap.has(name)) {
+          playerMap.set(name, { kills: 0, deaths: 0, tier: row.tier || '' });
+        }
+        const stats = playerMap.get(name);
+        stats.kills += row.kills;
+        stats.deaths += row.deaths;
+        // preserve first non-empty tier as representative (or you could choose best tier)
+        if (!stats.tier && row.tier) stats.tier = row.tier;
+        playerMap.set(name, stats);
+      }
+    }
+    const overallRows = [];
+    for (const [player, stats] of playerMap.entries()) {
+      const kills = stats.kills;
+      const deaths = stats.deaths || 1;
+      const kdr = kills / Math.max(1, deaths);
+      overallRows.push({
+        player: player,
+        kills: kills,
+        deaths: deaths,
+        kdr: kdr,
+        tier: stats.tier || '',
+        rank: 0 // temporary
+      });
+    }
+    // sort by KDR descending, then kills
+    overallRows.sort((a,b) => {
+      if (a.kdr !== b.kdr) return b.kdr - a.kdr;
+      return b.kills - a.kills;
+    });
+    // assign ranks
+    overallRows.forEach((row, idx) => { row.rank = idx + 1; });
+    return overallRows;
+  }
+
   async function fetchAndUpdateLeaderboard() {
     if (!CSV_SOURCE_URL || CSV_SOURCE_URL === "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAMPLE_PUBLISH_CSV/pub?output=csv") {
-      // Show demo / placeholder message with instructions
       leaderboardRoot.innerHTML = `<div class="error-message">
         <strong>⚠️ CSV source not configured</strong><br><br>
         Please set your Google Sheets CSV export link in the script:<br>
         <code style="background:#1e1f2a; padding:6px 12px; border-radius:12px; display:inline-block; margin-top:8px;">const CSV_SOURCE_URL = "YOUR_PUBLISHED_CSV_LINK";</code>
         <br><br>📌 Expected CSV columns: <strong>tab, rank, player, kills, deaths, tier</strong> (tier optional).<br>
-        Auto-sync will start after providing a valid URL.
+        <strong>🏆 Overall tab is computed automatically</strong> from all category rows.
       </div>`;
       tabContainer.innerHTML = `<div style="color:#8f9bb5;">Awaiting CSV configuration</div>`;
       return;
     }
     try {
-      // show loading indicator on current panel if exists
       if (currentActiveTabKey && panelElements.has(currentActiveTabKey)) {
         const panel = panelElements.get(currentActiveTabKey);
         if (panel) panel.innerHTML = `<div class="loading-message">⟳ Syncing with Google Sheets...</div>`;
       } else {
-        leaderboardRoot.innerHTML = `<div class="loading-message">⟳ Fetching live leaderboard data...</div>`;
+        leaderboardRoot.innerHTML = `<div class="loading-message">⟳ Fetching live leaderboard...</div>`;
       }
       const response = await fetch(CSV_SOURCE_URL, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -662,7 +664,7 @@
       const parsed = parseCSV(csvText);
       if (!parsed.length) throw new Error("CSV is empty or invalid format");
 
-      // group by 'tab' column (required)
+      // Group by 'tab' column
       const groups = new Map();
       for (const row of parsed) {
         let tabKey = (row.tab || row.category || "").trim().toLowerCase();
@@ -671,40 +673,46 @@
         const killsRaw = parseInt(row.kills, 10) || 0;
         const deathsRaw = parseInt(row.deaths, 10) || 1;
         const kdr = killsRaw / Math.max(1, deathsRaw);
-        const playerName = row.player || row.name || "Unknown";
+        const playerName = (row.player || row.name || "Unknown").trim();
         const tierValue = row.tier || "";
-        if (!groups.has(tabKey)) {
-          groups.set(tabKey, []);
-        }
+        if (!groups.has(tabKey)) groups.set(tabKey, []);
         groups.get(tabKey).push({
           rank: rankRaw,
-          player: String(playerName).trim(),
+          player: playerName,
           kills: killsRaw,
           deaths: deathsRaw,
           kdr: kdr,
-          tier: String(tierValue).trim()
+          tier: tierValue
         });
       }
       if (groups.size === 0) throw new Error("No valid 'tab' column found. Ensure CSV has column named 'tab'");
-      // sort each group by rank ascending
+
+      // Sort each group by rank
       for (let [key, rows] of groups.entries()) {
         rows.sort((a,b) => a.rank - b.rank);
         groups.set(key, rows);
       }
-      // store into tabsData
+
+      // Compute OVERALL tab (aggregated from all categories, not synced from CSV)
+      const overallRows = computeOverallFromCategories(groups);
+      
+      // Prepare final tabsData: overall first, then all category groups
       tabsData.clear();
+      // Add overall tab (display name "OVERALL")
+      tabsData.set("overall", { displayName: "OVERALL", rows: overallRows });
+      
+      // Add other tabs (skip if any existing 'overall' tab from CSV to avoid duplication)
       for (let [key, rows] of groups.entries()) {
+        if (key === "overall") continue; // skip raw overall from CSV, we use computed one
         let displayName = key.charAt(0).toUpperCase() + key.slice(1);
         tabsData.set(key, { displayName, rows });
       }
-      // rebuild panels and tabs
+      
       const tabKeys = Array.from(tabsData.keys());
       initPanelsStructure(tabKeys);
       renderTabs();
-      // after rendering, ensure active panel is set and data displayed
       if (tabKeys.length > 0) {
-        const firstKey = tabKeys[0];
-        setActiveTab(firstKey);
+        setActiveTab(tabKeys[0]);
         resetFilter();
       }
     } catch (err) {
@@ -713,27 +721,19 @@
         ❌ Failed to load/parse CSV.<br>
         URL: ${escapeHtml(CSV_SOURCE_URL)}<br>
         Error: ${escapeHtml(err.message)}<br><br>
-        Ensure the CSV is published and contains columns: <strong>tab, rank, player, kills, deaths</strong> (tier optional).
+        Ensure CSV is published and contains columns: <strong>tab, rank, player, kills, deaths</strong> (tier optional).
+        <br><br>🏆 <strong>Overall tab is auto-generated</strong> from all category rows.
       </div>`;
-      tabContainer.innerHTML = `<div style="color:#b77c7c;">⚠️ Data error — check console</div>`;
+      tabContainer.innerHTML = `<div style="color:#b77c7c;">⚠️ Data error — check console & CSV format</div>`;
     }
   }
 
-  // Auto refresh interval
   let refreshInterval = null;
   function startAutoRefresh() {
     if (refreshInterval) clearInterval(refreshInterval);
-    refreshInterval = setInterval(() => {
-      fetchAndUpdateLeaderboard();
-    }, AUTO_REFRESH_MS);
+    refreshInterval = setInterval(() => fetchAndUpdateLeaderboard(), AUTO_REFRESH_MS);
   }
 
-  // Manual refresh handler
-  function handleManualRefresh() {
-    fetchAndUpdateLeaderboard();
-  }
-
-  // Search event
   function bindSearch() {
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -742,7 +742,6 @@
     }
   }
 
-  // Copy IP
   function bindCopyIP() {
     const copyBtn = document.getElementById('copyIpButton');
     const ipSpan = document.getElementById('serverIpText');
@@ -752,10 +751,7 @@
         const ip = ipSpan.innerText;
         try {
           await navigator.clipboard.writeText(ip);
-          if (toastSpan) {
-            toastSpan.style.display = 'inline-block';
-            setTimeout(() => { toastSpan.style.display = 'none'; }, 1800);
-          }
+          if (toastSpan) { toastSpan.style.display = 'inline-block'; setTimeout(() => toastSpan.style.display = 'none', 1800); }
         } catch (e) {
           const textarea = document.createElement('textarea');
           textarea.value = ip;
@@ -763,16 +759,13 @@
           textarea.select();
           document.execCommand('copy');
           document.body.removeChild(textarea);
-          if (toastSpan) {
-            toastSpan.style.display = 'inline-block';
-            setTimeout(() => toastSpan.style.display = 'none', 1500);
-          }
+          if (toastSpan) { toastSpan.style.display = 'inline-block'; setTimeout(() => toastSpan.style.display = 'none', 1500); }
         }
       });
     }
   }
 
-  // ========== STAR PARTICLES (original bigger stars) ==========
+  // ========== PARTICLE BACKGROUND ==========
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
   let starsArray = [];
@@ -806,20 +799,16 @@
     }
     requestAnimationFrame(drawStars);
   }
-  window.addEventListener('resize', () => {
-    resizeCanvas();
-    initStars();
-  });
+  window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
   resizeCanvas();
   initStars();
   drawStars();
 
-  // ========== INIT APP ==========
+  // ========== INIT ==========
   async function init() {
     bindSearch();
     bindCopyIP();
-    if (refreshBtn) refreshBtn.addEventListener('click', handleManualRefresh);
-    // initial load
+    if (refreshBtn) refreshBtn.addEventListener('click', () => fetchAndUpdateLeaderboard());
     await fetchAndUpdateLeaderboard();
     startAutoRefresh();
   }
