@@ -256,9 +256,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     border: 2px solid #555;
+    text-transform: uppercase;
   }
   .mode-icon-container:hover .mode-icon-placeholder { transform: scale(1.05); border-color: #3b82f6; }
   .mode-tier {
@@ -270,7 +271,6 @@
     min-width: 38px;
   }
 
-  /* Role badges (based on points, not rank) */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -345,8 +345,8 @@
 </div>
 
 <script>
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQm8-1rFiM_NhzXsNqWuirSOx8OlbfERAHXOURGsw3Q-S2WONa7ox73AnGTWqPxLMJSdeKFrieBe4Ph/pub?output=csv";
-  const REGION_COLUMN_INDEX = 2; // Column index for region (0-based)
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Z8SzplonsR2NbZ20b6TazugXY4YjX3sMeIxGG_cXErabJUERRszTqoOX7RPAYQXnlfnwbQemEP7k/pub?output=csv";
+  const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "Total", regionCol = "__region";
 
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
@@ -354,8 +354,15 @@
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
   const MODE_NAMES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
+  // Mapping for short labels inside circles
+  const MODE_SHORT_LABELS = {
+    "Spearmace": "SPEAR",
+    "MaceCart": "CART",
+    "Modern": "MOD",
+    "DSMP Mace": "DSMP",
+    "NethSMP": "NETH"
+  };
 
-  // ---- Role assignment based on Total points (not rank) ----
   function getRoleByPoints(points) {
     const pts = parseFloat(points);
     if (isNaN(pts)) return { name: "CritTiers Rookie", icon: "<i class='fas fa-baby-carriage'></i>", className: "rookie", symbol: "🍼" };
@@ -375,7 +382,6 @@
 
   function getInitial(name) { return name ? name.charAt(0).toUpperCase() : "?"; }
 
-  // ---- Case‑insensitive column matching for mode tiers ----
   function findModeColumn(player, modeName) {
     const lowerMode = modeName.toLowerCase();
     for (let key in player) {
@@ -444,11 +450,10 @@
       const peakTier = parsed.peakTier;
       const color = tierColors[baseTier] || "#666";
       let tooltipText = peakTier ? `⚡ Peak: ${peakTier} → ${tierPointsMap[peakTier]} pts` : `${displayTier} → ${tierPointsMap[baseTier]} pts`;
-      let shortMode = modeName.replace("Mace", "").replace("DSMP", "").substring(0, 3);
-      if (modeName === "DSMP Mace") shortMode = "DSM";
+      const shortLabel = MODE_SHORT_LABELS[modeName] || modeName.substring(0, 3).toUpperCase();
       html += `<div class="mode-icon-container" data-tooltip="${tooltipText}">
                   <div class="mode-icon-placeholder" style="background:${color}20; border-color:${color};">
-                    <span style="font-size:10px; font-weight:bold; color:${color};">${shortMode}</span>
+                    <span style="font-size:10px; font-weight:bold; color:${color};">${shortLabel}</span>
                   </div>
                   <div class="mode-tier" style="background:${color}; color:#000;">${displayTier}</div>
                 </div>`;
@@ -462,13 +467,10 @@
     const text = await res.text();
     const { headers, data } = parseCSV(text);
     allRows = data;
-    // Find name column (case‑insensitive)
     nameCol = headers.find(h=>/name|player/i.test(h)) || headers[0];
-    // Explicitly look for "Total" column (case‑insensitive) for points
     const totalCol = headers.find(h=>h.toLowerCase() === "total");
     pointsCol = totalCol ? totalCol : (headers.find(h=>/points/i.test(h)) || headers[1]);
     
-    // Sort by Total points descending for Overall tab
     const sortedByPoints = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
     sortedByPoints.forEach((player, idx) => { player.overallRank = idx + 1; });
     
@@ -537,7 +539,6 @@
         </div>`;
       });
     } else {
-      // For specific mode tab, group by tier using exact column (case‑insensitive)
       const groups = {};
       allRows.forEach(r => {
         const name = r[nameCol];
