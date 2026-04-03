@@ -452,7 +452,7 @@
     margin-top: 4px;
   }
 
-  /* ===== OVERALL TAB: POINTS IN A STRAIGHT LINE & CENTER-ALIGNED ===== */
+  /* ===== OVERALL TAB: POINTS ON THE RIGHT, TIERS ON THE LEFT, STRAIGHT LINE ===== */
   .player-card .overall-right {
     display: flex;
     align-items: center;
@@ -460,7 +460,7 @@
     margin-left: auto;
   }
   .player-card .points-box {
-    width: 110px;            /* fixed width ensures all points numbers align vertically */
+    width: 110px;            /* fixed width ensures vertical alignment */
     text-align: center;      /* center the points text horizontally */
     flex-shrink: 0;
     background: #0f111a;
@@ -471,7 +471,7 @@
     margin-top: 0;
     flex-shrink: 1;
   }
-  /* On small screens, allow stacking but keep points left-aligned with fixed width */
+  /* On small screens, allow stacking but keep points box width */
   @media (max-width: 700px) {
     .player-card .overall-right {
       flex-wrap: wrap;
@@ -479,7 +479,6 @@
       justify-content: space-between;
     }
     .player-card .points-box {
-      text-align: center;
       width: auto;
       min-width: 100px;
     }
@@ -781,6 +780,7 @@
         const roleHtml = `<span class="rank ${roleSmall.className}" style="font-size:0.7rem; padding:2px 10px;"><i class="${roleSmall.icon.split(' ')[1]}"></i> ${roleSmall.name}</span>`;
         const pointsDisplay = `<div class="points-box"><span class="points-value">${r[pointsCol]}</span> <span class="text-xs text-gray-400">pts</span></div>`;
         const modeIconsCompact = getModeIconsHTML(r, true);
+        // Points placed on the right (after the tiers)
         htmlOut += `<div class="player-card ${bannerClass} ${shimmerClass}" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${rank}">
           <div class="overall-left">
             <div class="rank-number">#${rank}</div>
@@ -790,7 +790,7 @@
               <div class="player-role-badge">${roleHtml}</div>
             </div>
           </div>
-          <div class="overall-right">${pointsDisplay}${modeIconsCompact}</div>
+          <div class="overall-right">${modeIconsCompact}${pointsDisplay}</div>
         </div>`;
       });
     } else {
