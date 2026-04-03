@@ -11,8 +11,6 @@ body {
     font-family: Arial, sans-serif;
     color: white;
     overflow-x: hidden;
-
-    /* ✅ NO LINES BACKGROUND */
     background: #2b2b2b;
 }
 
@@ -151,7 +149,7 @@ body::before {
 
 <!-- TABS -->
 <div class="tabs">
-    <div class="tab active">Overall</div>
+    <div class="tab active">🏆 Overall</div>
     <div class="tab">Spearmace</div>
     <div class="tab">MaceCart</div>
     <div class="tab">Modern</div>
@@ -170,7 +168,7 @@ tabs.forEach(tab => {
     };
 });
 
-/* ⭐ STAR PARTICLES */
+/* ⭐ STAR PARTICLES (BIGGER) */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 
@@ -183,7 +181,7 @@ for (let i = 0; i < 120; i++) {
     stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 1.5,
+        size: Math.random() * 2.5 + 0.5, // ⭐ bigger stars
         alpha: Math.random(),
         twinkle: Math.random() * 0.02
     });
@@ -197,7 +195,7 @@ function drawStars() {
         ctx.fillStyle = "rgba(255,255,255," + s.alpha + ")";
         ctx.fillRect(s.x, s.y, s.size, s.size);
 
-        // twinkle effect
+        // twinkle
         s.alpha += s.twinkle;
         if (s.alpha <= 0 || s.alpha >= 1) {
             s.twinkle *= -1;
