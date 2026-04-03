@@ -123,73 +123,57 @@
     box-shadow: 0 0 8px #3b82f6;
   }
 
-  .player-card {
+  /* Tier columns grid */
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+  }
+  .tier-column {
+    background: rgba(15, 17, 24, 0.6);
+    border-radius: 20px;
+    padding: 16px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .tier-header-col {
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 8px;
+    border-radius: 40px;
+    margin-bottom: 16px;
+    background: #1a1d2a;
+  }
+  .player-card-tier {
     background: #1f2937;
-    padding: 12px;
-    border-radius: 16px;
+    padding: 10px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 8px;
     transition: 0.2s;
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.05);
-    position: relative;
-    overflow: hidden;
   }
-  .player-card.gold-banner {
-    background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
-    border-left: 4px solid #ffd700;
-    box-shadow: 0 0 12px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,215,0,0.2);
+  .player-card-tier.ht-bright {
+    background: linear-gradient(135deg, #2a3a4a, #1f2937);
+    border-left: 3px solid #ffd966;
   }
-  .player-card.gold-banner::before {
-    content: "👑";
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    font-size: 28px;
-    opacity: 0.2;
-    transform: rotate(15deg);
-    pointer-events: none;
+  .player-card-tier.lt-dark {
+    background: linear-gradient(135deg, #1a202c, #111827);
+    border-left: 3px solid #6c757d;
+    opacity: 0.9;
   }
-  .player-card.silver-banner {
-    background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
-    border-left: 4px solid #c0c0c0;
-    box-shadow: 0 0 10px rgba(192,192,192,0.25), inset 0 1px 0 rgba(192,192,192,0.15);
-  }
-  .player-card.silver-banner::before {
-    content: "🏅";
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    font-size: 28px;
-    opacity: 0.2;
-    transform: rotate(10deg);
-    pointer-events: none;
-  }
-  .player-card.bronze-banner {
-    background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
-    border-left: 4px solid #cd7f32;
-    box-shadow: 0 0 10px rgba(205,127,50,0.25), inset 0 1px 0 rgba(205,127,50,0.1);
-  }
-  .player-card.bronze-banner::before {
-    content: "🏅";
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    font-size: 28px;
-    opacity: 0.2;
-    transform: rotate(5deg);
-    pointer-events: none;
-  }
-  .player-card:hover {
+  .player-card-tier:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 20px rgba(59,130,246,0.3);
-    border-color: rgba(59,130,246,0.5);
+    box-shadow: 0 8px 16px rgba(59,130,246,0.2);
   }
-  .player-avatar {
-    width: 52px;
-    height: 52px;
+  .player-avatar-small {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: #2d3748;
     border: 2px solid #3b82f6;
@@ -197,89 +181,37 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 16px;
     color: #a0aec0;
     flex-shrink: 0;
   }
-  .mode-icons {
-    display: flex;
-    gap: 10px;
-    margin-top: 6px;
-    flex-wrap: wrap;
+  .player-info {
+    flex: 1;
   }
-  .mode-icon-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    width: 52px;
-    cursor: help;
+  .player-name {
+    font-weight: 600;
+    font-size: 0.9rem;
   }
-  .mode-icon-placeholder {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #2d3748;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: bold;
-    border: 2px solid #555;
-    text-transform: uppercase;
-  }
-  .mode-icon-container:hover .mode-icon-placeholder { transform: scale(1.05); border-color: #3b82f6; }
-  .mode-tier {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 9999px;
-    text-align: center;
-    min-width: 38px;
-  }
-
-  .rank {
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 40px;
+  .player-points {
     font-size: 0.75rem;
+    color: #7cb8ff;
   }
-  .rank.master { background: linear-gradient(135deg, #ffd966, #ffaa33); color: #2c1a00; }
-  .rank.ace { background: linear-gradient(135deg, #a0a0ff, #6c6cff); color: white; }
-  .rank.specialist { background: linear-gradient(135deg, #6ab04c, #2ecc71); color: #1a3a1a; }
-  .rank.cadet { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
-  .rank.novice { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; }
-  .rank.rookie { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
-  .rank-large { font-size: 1rem !important; padding: 6px 18px !important; }
-
-  .region-badge { padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; margin-left: 6px; }
-  .region-badge.EU { background:#22c55e; color:#000; }
-  .region-badge.AS { background:#3b82f6; color:#fff; }
-  .region-badge.NA { background:#ef4444; color:#fff; }
-  .region-badge.SA { background:#db2777; color:#fff; }
-  .region-badge.AU { background:#fbbf24; color:#000; }
-
-  .modal-bg { background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); position:fixed; inset:0; display:flex; justify-content:center; align-items:center; z-index:1000; }
-  .modal { background:#1f2937; padding:24px; border-radius:28px; max-width:500px; width:90%; max-height:85vh; overflow-y:auto; border:1px solid #3b82f6; box-shadow:0 20px 35px rgba(0,0,0,0.6); }
-  .modal-close { cursor:pointer; float:right; font-size:1.8rem; line-height:1; color:#aaa; }
-  .modal-close:hover { color:#3b82f6; }
-
-  .main-container { max-width: 1300px; margin: 0 auto; padding: 0 20px; }
+  .tier-badge-col {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #2d3748;
+  }
   @media (max-width: 700px) {
-    .top-bar { flex-direction: column; align-items: flex-start; }
-    .right-panel { align-items: stretch; width: 100%; }
-    .search-input { width: 100%; }
-    .player-card { flex-wrap: wrap; }
-    .main-container { padding: 0 16px; }
+    .tier-grid { grid-template-columns: 1fr; }
+    .player-card-tier { flex-wrap: wrap; }
   }
 </style>
 </head>
 <body>
 <div id="particles"></div>
-<div class="main-container">
+<div class="main-container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
   <div class="top-bar">
     <div class="brand">
       <img class="brand-logo" src="https://i.ibb.co/3bHWyM6/image.png" alt="CritTiers" onerror="this.src='https://via.placeholder.com/48?text=CT'">
@@ -304,21 +236,19 @@
   <div id="rankings"></div>
 
   <div id="player-modal" class="hidden modal-bg">
-    <div class="modal">
-      <span class="modal-close" id="modal-close">&times;</span>
+    <div class="modal" style="background:#1f2937; padding:24px; border-radius:28px; max-width:500px; width:90%; max-height:85vh; overflow-y:auto; border:1px solid #3b82f6;">
+      <span class="modal-close" id="modal-close" style="cursor:pointer; float:right; font-size:1.8rem; color:#aaa;">&times;</span>
       <div id="modal-content"></div>
     </div>
   </div>
 </div>
 
 <script>
-  // NEW CSV URL
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQm8-1rFiM_NhzXsNqWuirSOx8OlbfERAHXOURGsw3Q-S2WONa7ox73AnGTWqPxLMJSdeKFrieBe4Ph/pub?output=csv";
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "Total", regionCol = "__region";
 
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
-  const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
   const MODE_NAMES = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
@@ -407,8 +337,8 @@
 
   function getModeIconsHTML(player) {
     const modes = getPlayerModes(player);
-    if (modes.length === 0) return '<div class="mode-icons" style="opacity:0.5;"><span class="text-xs text-gray-400">no tiers</span></div>';
-    let html = '<div class="mode-icons">';
+    if (modes.length === 0) return '<div style="opacity:0.5;"><span class="text-xs text-gray-400">no tiers</span></div>';
+    let html = '<div class="flex gap-2 flex-wrap">';
     for (let { modeName, rawTier } of modes) {
       const parsed = parseTierString(rawTier);
       if (!parsed) continue;
@@ -418,11 +348,9 @@
       const color = tierColors[baseTier] || "#666";
       let tooltipText = peakTier ? `⚡ Peak: ${peakTier} → ${tierPointsMap[peakTier]} pts` : `${displayTier} → ${tierPointsMap[baseTier]} pts`;
       const shortLabel = MODE_SHORT_LABELS[modeName] || modeName.substring(0, 3).toUpperCase();
-      html += `<div class="mode-icon-container" data-tooltip="${tooltipText}">
-                  <div class="mode-icon-placeholder" style="background:${color}20; border-color:${color};">
-                    <span style="font-size:10px; font-weight:bold; color:${color};">${shortLabel}</span>
-                  </div>
-                  <div class="mode-tier" style="background:${color}; color:#000;">${displayTier}</div>
+      html += `<div class="flex flex-col items-center w-12" data-tooltip="${tooltipText}">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border-2" style="background:${color}20; border-color:${color}; color:${color};">${shortLabel}</div>
+                  <div class="text-[9px] font-bold px-1 rounded-full mt-1" style="background:${color}; color:#000;">${displayTier}</div>
                 </div>`;
     }
     html += '</div>';
@@ -506,9 +434,9 @@
         </div>`;
       });
     } else {
-      // Mode-specific tab: flat list sorted by Total points, MCTiers style
-      // Collect players that have a tier in this mode
-      const modePlayers = [];
+      // Mode-specific: Tier columns grid
+      // Collect all players with tier in this mode
+      const playersByTier = {}; // key: baseTier (HT1, LT1, etc.)
       for (const r of allRows) {
         let rawTier = null;
         for (let key in r) {
@@ -517,52 +445,72 @@
         if (!rawTier) continue;
         const parsed = parseTierString(rawTier);
         if (!parsed) continue;
-        modePlayers.push({
+        const baseTier = parsed.baseTier;
+        if (!playersByTier[baseTier]) playersByTier[baseTier] = [];
+        playersByTier[baseTier].push({
           player: r,
-          rawTier: rawTier,
+          rawTier,
           displayTier: parsed.display,
-          baseTier: parsed.baseTier,
+          baseTier,
           points: parseFloat(r[pointsCol] || 0)
         });
       }
-      // Sort by points descending
-      modePlayers.sort((a,b) => b.points - a.points);
-      // Assign ranks
-      modePlayers.forEach((p, idx) => { p.rank = idx + 1; });
-      // Build HTML
-      for (const p of modePlayers) {
-        const r = p.player;
-        const name = r[nameCol];
-        const rank = p.rank;
-        const pointsVal = p.points;
-        const region = r[regionCol];
-        const initial = getInitial(name);
-        let regionHTML = "";
-        if(region) {
-          let rc = ""; const reg = region.toUpperCase().trim();
-          if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
-          regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
+      // Sort each tier group by points descending
+      for (let tier in playersByTier) {
+        playersByTier[tier].sort((a,b) => b.points - a.points);
+      }
+      // Define tier groups: Tier 1 = HT1+LT1, Tier 2 = HT2+LT2, ..., Tier 5 = HT5+LT5
+      const tierGroups = [
+        { name: "Tier 1", tiers: ["HT1", "LT1"] },
+        { name: "Tier 2", tiers: ["HT2", "LT2"] },
+        { name: "Tier 3", tiers: ["HT3", "LT3"] },
+        { name: "Tier 4", tiers: ["HT4", "LT4"] },
+        { name: "Tier 5", tiers: ["HT5", "LT5"] }
+      ];
+      let gridHtml = '<div class="tier-grid">';
+      for (const group of tierGroups) {
+        let columnHtml = `<div class="tier-column"><div class="tier-header-col" style="background: #2d3748;">${group.name}</div>`;
+        let hasAny = false;
+        for (const tier of group.tiers) {
+          const players = playersByTier[tier] || [];
+          if (players.length === 0) continue;
+          hasAny = true;
+          const isHT = tier.startsWith("HT");
+          for (const p of players) {
+            const r = p.player;
+            const name = r[nameCol];
+            const pointsVal = p.points;
+            const region = r[regionCol];
+            const initial = getInitial(name);
+            let regionHTML = "";
+            if(region) {
+              let rc = ""; const reg = region.toUpperCase().trim();
+              if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
+              regionHTML = `<span class="region-badge ${rc}" style="font-size:0.6rem; margin-left:4px;">${region}</span>`;
+            }
+            const cardClass = isHT ? "ht-bright" : "lt-dark";
+            columnHtml += `<div class="player-card-tier ${cardClass}" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${r.overallRank || 999}">
+              <div class="player-avatar-small">${initial}</div>
+              <div class="player-info">
+                <div class="player-name">${name} ${regionHTML}</div>
+                <div class="player-points">${pointsVal} pts</div>
+              </div>
+              <div class="tier-badge-col" style="background:${tierColors[tier]}; color:#000;">${p.displayTier}</div>
+            </div>`;
+          }
         }
-        const tierColor = tierColors[p.baseTier] || "#666";
-        htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${r.overallRank || 999}">
-          <div class="player-avatar">${initial}</div>
-          <div class="flex-1">
-            <div class="flex items-center flex-wrap gap-2"><span class="font-bold text-lg">${rank}.</span> <span class="font-semibold">${name}</span>${regionHTML}</div>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="tier-header" style="background:${tierColor}; padding:4px 12px; font-size:0.9rem;" data-tooltip="${p.baseTier} → ${tierPointsMap[p.baseTier]} pts">${p.displayTier}</div>
-            <div class="font-mono text-lg font-bold text-blue-400">${pointsVal} <span class="text-sm">pts</span></div>
-          </div>
-        </div>`;
+        if (hasAny) gridHtml += columnHtml + '</div>';
       }
-      if (modePlayers.length === 0) {
-        htmlOut = `<div class="text-center text-gray-400 py-10">No players found for this mode.</div>`;
-      }
+      gridHtml += '</div>';
+      htmlOut = gridHtml;
+      if (gridHtml === '<div class="tier-grid"></div>') htmlOut = '<div class="text-center text-gray-400 py-10">No players found for this mode.</div>';
     }
     document.getElementById("rankings").innerHTML = htmlOut;
 
-    document.querySelectorAll(".player-card").forEach(card => {
-      card.onclick = () => {
+    // Attach click handlers to all player cards
+    document.querySelectorAll(".player-card, .player-card-tier").forEach(card => {
+      card.onclick = (e) => {
+        e.stopPropagation();
         const p = JSON.parse(card.dataset.player.replace(/&apos;/g, "'"));
         const region = p[regionCol];
         const pointsVal = parseFloat(p[pointsCol]||0);
@@ -586,10 +534,17 @@
     });
   }
 
+  // Search filter (works on both overall and tier cards)
   document.getElementById("search-input").addEventListener("input", e => {
     const term = e.target.value.toLowerCase();
-    document.querySelectorAll(".player-card").forEach(card => {
-      card.style.display = card.textContent.toLowerCase().includes(term) ? "flex" : "none";
+    document.querySelectorAll(".player-card, .player-card-tier").forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(term) ? "flex" : "none";
+    });
+    // Also hide empty columns in grid view
+    document.querySelectorAll(".tier-column").forEach(col => {
+      const visibleCards = Array.from(col.querySelectorAll(".player-card-tier")).some(card => card.style.display !== "none");
+      col.style.display = visibleCards ? "block" : "none";
     });
   });
 
@@ -624,4 +579,4 @@
   setInterval(() => loadCSV().catch(console.warn), 60000);
 </script>
 </body>
-</html>
+</html>html>
