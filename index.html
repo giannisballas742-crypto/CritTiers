@@ -14,7 +14,7 @@ body {
     overflow-x: hidden;
 }
 
-/* PARTICLE CANVAS */
+/* PARTICLES */
 #particles {
     position: fixed;
     width: 100%;
@@ -61,7 +61,7 @@ body {
     outline: none;
 }
 
-/* SERVER IP BOX */
+/* SERVER BOX */
 .server-box {
     margin-top: 10px;
     background: #222;
@@ -79,43 +79,46 @@ body {
     border-radius: 6px;
 }
 
-/* TABS */
+/* TABS (NEW STYLE) */
 .tabs {
     display: flex;
-    gap: 15px;
+    gap: 25px;
     padding: 10px 40px;
-    overflow-x: auto;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
 .tab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 18px;
-    background: #2c2c2c;
-    border-radius: 20px;
+    padding: 10px 5px;
     cursor: pointer;
-    white-space: nowrap;
-    transition: 0.3s;
-    border: 1px solid transparent;
+    position: relative;
+    color: #ddd;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-/* HOVER */
+/* Hover */
 .tab:hover {
-    background: #3a3a3a;
+    color: white;
 }
 
-/* ACTIVE TAB WITH GLOW + GRADIENT */
+/* Active underline + glow */
 .tab.active {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color: black;
-    box-shadow: 0 0 10px #00f2fe, 0 0 20px #4facfe;
+    color: white;
 }
 
-/* SCROLLBAR HIDE */
-.tabs::-webkit-scrollbar {
-    display: none;
+.tab.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    box-shadow: 0 0 10px #00f2fe;
+    border-radius: 2px;
 }
+
+/* PARTICLES */
 </style>
 </head>
 
@@ -123,19 +126,15 @@ body {
 
 <canvas id="particles"></canvas>
 
-<!-- TOP BAR -->
+<!-- TOP -->
 <div class="topbar">
-    
-    <!-- LEFT -->
     <div class="left">
         <img src="https://i.ibb.co/3bHWyM6/image.png">
         <div class="title">CritTiers</div>
     </div>
 
-    <!-- RIGHT -->
     <div class="right">
         <input type="text" class="search" placeholder="Search players...">
-
         <div class="server-box">
             <span>SERVER IP</span>
             <div class="server-ip">CritTiers.xyz</div>
@@ -145,16 +144,16 @@ body {
 
 <!-- TABS -->
 <div class="tabs">
-    <div class="tab active">🏆 Overall</div>
-    <div class="tab"> Spearmace</div>
-    <div class="tab"> MaceCart</div>
-    <div class="tab"> Modern</div>
-    <div class="tab"> DSMP Mace</div>
-    <div class="tab"> NethSMP</div>
+    <div class="tab active">Overall</div>
+    <div class="tab">Spearmace</div>
+    <div class="tab">MaceCart</div>
+    <div class="tab">Modern</div>
+    <div class="tab">DSMP Mace</div>
+    <div class="tab">NethSMP</div>
 </div>
 
 <script>
-/* TAB SWITCHING */
+/* TAB SWITCH */
 const tabs = document.querySelectorAll(".tab");
 
 tabs.forEach(tab => {
@@ -164,7 +163,7 @@ tabs.forEach(tab => {
     };
 });
 
-/* PARTICLES BACKGROUND */
+/* PARTICLES */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 
@@ -204,7 +203,6 @@ function animate() {
 
 animate();
 
-/* RESIZE FIX */
 window.onresize = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
