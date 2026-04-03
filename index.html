@@ -12,8 +12,8 @@ body {
     color: white;
     overflow-x: hidden;
 
-    /* 🔥 GRADIENT BACKGROUND */
-    background: linear-gradient(135deg, #6e6e6e, #3f3f3f, #2a2a2a);
+    /* ✅ SMOOTH DARK GRADIENT (NO LINES) */
+    background: linear-gradient(to bottom, #4a4a4a, #2f2f2f);
 }
 
 /* PARTICLES */
@@ -73,7 +73,7 @@ body {
     align-items: center;
     gap: 10px;
     font-size: 14px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.08);
 }
 
 .server-ip {
@@ -87,7 +87,7 @@ body {
     display: flex;
     gap: 25px;
     padding: 10px 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .tab {
@@ -115,7 +115,7 @@ body {
     width: 100%;
     height: 3px;
     background: linear-gradient(90deg, #4facfe, #00f2fe);
-    box-shadow: 0 0 10px #00f2fe;
+    box-shadow: 0 0 8px #00f2fe;
     border-radius: 2px;
 }
 </style>
@@ -171,13 +171,13 @@ canvas.height = window.innerHeight;
 
 let particles = [];
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 80; i++) {
     particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         r: Math.random() * 2,
-        dx: (Math.random() - 0.5) * 0.4,
-        dy: (Math.random() - 0.5) * 0.4
+        dx: (Math.random() - 0.5) * 0.3,
+        dy: (Math.random() - 0.5) * 0.3
     });
 }
 
@@ -187,7 +187,7 @@ function animate() {
     particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
         ctx.fill();
 
         p.x += p.dx;
