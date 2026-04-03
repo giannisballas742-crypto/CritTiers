@@ -108,6 +108,15 @@
     position: relative;
     text-transform: uppercase;
     font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mctier-tab img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
   }
   .mctier-tab:hover { color: #ffffff; }
   .mctier-tab.active { color: white; }
@@ -528,7 +537,6 @@
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "Total", regionCol = "__region";
 
-  // EXACT POINTS PER TIER (as requested)
   const tierPointsMap = { "HT1":60, "LT1":45, "HT2":30, "LT2":20, "HT3":10, "LT3":6, "HT4":4, "LT4":3, "HT5":2, "LT5":1 };
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
@@ -539,6 +547,15 @@
     "Modern": "MOD",
     "DSMP Mace": "DSMP",
     "NethSMP": "NETH"
+  };
+
+  // Emoji icons for tabs
+  const MODE_EMOJI = {
+    "Spearmace": "https://cdn.discordapp.com/emojis/1489730933312716810.webp?size=96",
+    "MaceCart": "https://cdn.discordapp.com/emojis/1479042588601352272.webp?size=96",
+    "Modern": "https://cdn.discordapp.com/emojis/1448239872484835389.webp?size=96",
+    "DSMP Mace": "https://cdn.discordapp.com/emojis/1479430918514020483.webp?size=96",
+    "NethSMP": "https://cdn.discordapp.com/emojis/1484495828889374851.webp?size=96"
   };
 
   function getRoleByPoints(points) {
@@ -627,7 +644,6 @@
       const baseTier = parsed.baseTier;
       const peakTier = parsed.peakTier;
       const color = tierColors[baseTier] || "#666";
-      // Build tooltip text with exact points from tierPointsMap
       let tooltipText = "";
       if (peakTier) {
         const currentPoints = tierPointsMap[baseTier] || 0;
@@ -666,9 +682,17 @@
     const allModes = ["Overall", ...MODE_NAMES];
     allModes.forEach((mode, idx) => {
       const btn = document.createElement("button");
-      btn.textContent = mode === "Overall" ? "🏆 OVERALL" : mode.toUpperCase();
       btn.className = "mctier-tab";
       if(idx === 0) btn.classList.add("active");
+      
+      if (mode === "Overall") {
+        btn.innerHTML = `🏆 OVERALL`;
+      } else {
+        const emojiUrl = MODE_EMOJI[mode];
+        const modeUpper = mode.toUpperCase();
+        btn.innerHTML = `<img src="${emojiUrl}" alt="${mode}" loading="lazy"> ${modeUpper}`;
+      }
+      
       btn.onclick = () => {
         document.querySelectorAll(".mctier-tab").forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
