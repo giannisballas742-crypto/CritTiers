@@ -4,21 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>CritTiers · Mace PvP Rankings</title>
-<!-- Google Fonts + Tailwind (lightweight) -->
+<!-- Google Fonts + Tailwind -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  /* ----- CRITTIERS DARK THEME (matching photo) ----- */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #0b0d12;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: linear-gradient(135deg, #1a1c23 0%, #0a0c10 100%);
     color: #eef2ff;
     overflow-x: hidden;
     min-height: 100vh;
   }
-  /* particles background (reddish glow) */
+  /* Star particles (white, subtle) */
   #particles {
     position: fixed;
     top: 0;
@@ -27,21 +26,20 @@
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(circle at 30% 20%, rgba(219,62,62,0.18), transparent 70%);
   }
   .particle {
     position: absolute;
-    background: #db3e3e;
+    background: #ffffff;
     border-radius: 50%;
-    opacity: 0.3;
+    opacity: 0.5;
     animation: floatParticle linear infinite;
-    box-shadow: 0 0 6px #db3e3e;
+    box-shadow: 0 0 4px rgba(255,255,255,0.8);
   }
   @keyframes floatParticle {
-    0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-    15% { opacity: 0.4; }
-    85% { opacity: 0.4; }
-    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+    0% { transform: translateY(100vh) scale(0.2); opacity: 0; }
+    15% { opacity: 0.6; }
+    85% { opacity: 0.6; }
+    100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
   }
 
   /* ---- CRITTIERS TOP BAR ---- */
@@ -67,13 +65,20 @@
     background-clip: text; -webkit-background-clip: text; color: transparent;
   }
   .right-panel { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
-  .search-area { display: flex; gap: 10px; align-items: center; }
+  .search-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .search-input {
     background: #12141c; border: 1px solid #2a2e3a; padding: 10px 16px;
     border-radius: 40px; width: 240px; font-family: 'Inter', monospace;
     font-size: 14px; color: #f0f3fa; outline: none;
   }
   .search-input:focus { border-color: #db3e3e; box-shadow: 0 0 0 2px rgba(219,62,62,0.2); }
+  .discord-btn {
+    background: #5865F2; padding: 8px 18px; border-radius: 40px;
+    font-weight: 600; font-size: 14px; color: white;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: 0.2s; text-decoration: none;
+  }
+  .discord-btn:hover { background: #4752c4; transform: scale(1.02); }
   .server-card {
     background: #0f1118; border: 1px solid #262b36; border-radius: 48px;
     padding: 6px 12px 6px 20px; display: flex; align-items: center; gap: 16px;
@@ -85,7 +90,7 @@
   .copy-ip-btn:hover { background: #3f4458; }
   .copy-feedback { font-size: 12px; color: #6cfe9e; margin-left: 6px; }
 
-  /* ---- MCTIERS STYLE TABS (no icons, only text + underline) ---- */
+  /* TABS (MCTiers style) */
   .tabs-container {
     display: flex;
     flex-wrap: wrap;
@@ -124,7 +129,7 @@
     box-shadow: 0 0 8px #db3e3e;
   }
 
-  /* ---- PLAYER CARDS (keep existing style but aligned) ---- */
+  /* PLAYER CARDS */
   .player-card {
     background: #1f2937;
     padding: 12px;
@@ -156,7 +161,7 @@
     cursor: help;
     font-size: 1.2rem;
   }
-  /* tooltip (enhanced) */
+  /* tooltip */
   [data-tooltip] {
     position: relative;
     cursor: help;
@@ -184,7 +189,7 @@
   }
   [data-tooltip]:hover::after { opacity: 1; }
 
-  /* mode icons inside player card (keep small circles) */
+  /* mode icons (now just colored circles with tier text) */
   .mode-icons {
     display: flex;
     gap: 10px;
@@ -196,18 +201,22 @@
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    width: 46px;
+    width: 52px;
     cursor: help;
   }
-  .mode-icon {
+  .mode-icon-placeholder {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 2px solid #333;
-    object-fit: contain;
-    background: #111;
+    background: #2d3748;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid #555;
   }
-  .mode-icon-container:hover .mode-icon { transform: scale(1.05); border-color: #db3e3e; }
+  .mode-icon-container:hover .mode-icon-placeholder { transform: scale(1.05); border-color: #db3e3e; }
   .mode-tier {
     font-size: 10px;
     font-weight: 700;
@@ -259,15 +268,15 @@
 <body>
 <div id="particles"></div>
 <div class="max-w-6xl mx-auto p-5 relative z-10">
-  <!-- CRITTIERS TOP BAR (matching photo) -->
   <div class="top-bar">
     <div class="brand">
-      <img class="brand-logo" src="https://image2url.com/r2/default/images/1774620885752-0a4cfd73-edc2-4172-bbad-7a6b4cfa2beb.png" alt="CritTiers" onerror="this.src='https://via.placeholder.com/54?text=CT'">
+      <img class="brand-logo" src="https://i.ibb.co/3bHWyM6/image.png" alt="CritTiers" onerror="this.src='https://via.placeholder.com/54?text=CT'">
       <span class="brand-name">CritTiers</span>
     </div>
     <div class="right-panel">
       <div class="search-area">
         <input type="text" id="search-input" class="search-input" placeholder="Search players...">
+        <a href="https://discord.gg/2P7QJDgDh" target="_blank" class="discord-btn"><i class="fab fa-discord"></i> Join Discord</a>
       </div>
       <div class="server-card">
         <span class="server-label">✦ SERVER IP</span>
@@ -278,16 +287,10 @@
     </div>
   </div>
 
-  <!-- dynamic tabs (no icons, MCTiers style) -->
   <div id="tabs" class="tabs-container"></div>
-
-  <!-- mode title container (kit info button removed) -->
   <div id="mode-title-container" class="mt-4 mb-2"></div>
-
-  <!-- rankings container -->
   <div id="rankings"></div>
 
-  <!-- player modal -->
   <div id="player-modal" class="hidden modal-bg">
     <div class="modal">
       <span class="modal-close" id="modal-close">&times;</span>
@@ -297,15 +300,20 @@
 </div>
 
 <script>
-  // ==================== KEEP ALL ORIGINAL TIER / CSV LOGIC ====================
+  // ========== CSV URL (same) ==========
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Z8SzplonsR2NbZ20b6TazugXY4YjX3sMeIxGG_cXErabJUERRszTqoOX7RPAYQXnlfnwbQemEP7k/pub?output=csv";
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "", regionCol = "__region";
 
-  // tier points mapping
+  // Tier mapping (unchanged)
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
+
+  // NEW MODE LIST (as per request)
+  const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
+  // For tooltips and display inside player cards, we use these names (case-sensitive for CSV columns)
+  const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
 
   function extractBaseTierFromCode(tierCode) {
     const match = tierCode.match(/(HT[1-5]|LT[1-5])/i);
@@ -327,16 +335,6 @@
     return { display: upper, baseTier: baseTier, peakTier: null };
   }
   function extractBaseTier(rawTier) { return parseTierString(rawTier)?.baseTier || null; }
-
-  const modeIcons = { 
-    "LT Mace":"https://cdn.discordapp.com/emojis/1305399436708544512.webp?size=96",
-    "HT Mace":"https://cdn.discordapp.com/emojis/1431240960506990592.webp?size=96",
-    "Rocket Mace":"https://cdn.discordapp.com/emojis/1305399636030128178.webp?size=96",
-    "Rod Mace":"https://cdn.discordapp.com/emojis/1305399563716268095.webp?size=96",
-    "OG Mace":"https://cdn.discordapp.com/emojis/1305399676630994994.webp?size=96",
-    "Spear Mace":"https://cdn.discordapp.com/emojis/1463390685972660288.webp?size=96"
-  };
-  const OVERALL_ICON = "https://cdn.discordapp.com/emojis/1487324288175308971.webp?size=96"; // not shown in tabs, only for visual
 
   function getRoleByPoints(p) {
     const pts = parseFloat(p);
@@ -369,22 +367,28 @@
     return { headers, data };
   }
 
+  // Generate mode icons HTML (without external images, just colored circles)
   function getModeIconsHTML(player) {
     let html = '<div class="mode-icons">';
-    const orderedModes = ["LT Mace","HT Mace","Rocket Mace","Rod Mace","OG Mace","Spear Mace"];
-    orderedModes.forEach(mode => {
+    for (let mode of MODE_COLUMNS) {
       const rawTier = player[mode];
-      if (!rawTier) return;
+      if (!rawTier) continue;
       const parsed = parseTierString(rawTier);
-      if (!parsed) return;
+      if (!parsed) continue;
       const displayTier = parsed.display;
       const baseTier = parsed.baseTier;
       const peakTier = parsed.peakTier;
-      const iconUrl = modeIcons[mode];
       const color = tierColors[baseTier] || "#666";
       let tooltipText = peakTier ? `⚡ Peak: ${peakTier} → ${tierPointsMap[peakTier]} pts` : `${displayTier} → ${tierPointsMap[baseTier]} pts`;
-      html += `<div class="mode-icon-container" data-tooltip="${tooltipText}"><img src="${iconUrl}" class="mode-icon" style="border-color: ${color};"><div class="mode-tier" style="background:${color}; color:#000;">${displayTier}</div></div>`;
-    });
+      // short mode name for display
+      let shortMode = mode.replace(" Mace", "").substring(0, 3);
+      html += `<div class="mode-icon-container" data-tooltip="${tooltipText}">
+                  <div class="mode-icon-placeholder" style="background:${color}20; border-color:${color};">
+                    <span style="font-size:10px; font-weight:bold; color:${color};">${shortMode}</span>
+                  </div>
+                  <div class="mode-tier" style="background:${color}; color:#000;">${displayTier}</div>
+                </div>`;
+    }
     html += '</div>';
     return html;
   }
@@ -396,10 +400,10 @@
     allRows = data;
     nameCol = headers.find(h=>/name|player/i.test(h)) || headers[0];
     pointsCol = headers.find(h=>/points/i.test(h)) || headers[1];
-    const allModes = ["Overall","LT Mace","HT Mace","Rocket Mace","OG Mace","Rod Mace","Spear Mace"];
+    
     const tabsDiv = document.getElementById("tabs");
     tabsDiv.innerHTML = "";
-    allModes.forEach((mode, idx) => {
+    MODES.forEach((mode, idx) => {
       const btn = document.createElement("button");
       btn.textContent = mode === "Overall" ? "🏆 OVERALL" : mode.toUpperCase();
       btn.className = "mctier-tab";
@@ -459,11 +463,12 @@
         </div>`;
       });
     } else {
+      // For specific mode: group by tier
       const groups = {};
       allRows.forEach(r => {
         const name = r[nameCol];
         if(!name) return;
-        const raw = r[mode];
+        const raw = r[mode];  // mode matches CSV column name exactly
         if(!raw) return;
         const baseTier = extractBaseTier(raw);
         if(!baseTier) return;
@@ -529,7 +534,7 @@
     });
   }
 
-  // search filter
+  // Search filter
   document.getElementById("search-input").addEventListener("input", e => {
     const term = e.target.value.toLowerCase();
     document.querySelectorAll(".player-card").forEach(card => {
@@ -537,7 +542,7 @@
     });
   });
 
-  // copy IP
+  // Copy IP
   const copyBtn = document.getElementById("copyIpButton");
   const ipSpan = document.getElementById("serverIpText");
   const toastSpan = document.getElementById("copyToast");
@@ -547,22 +552,22 @@
     setTimeout(() => toastSpan.style.display = "none", 1500);
   });
 
-  // modal close
+  // Modal close
   document.getElementById("modal-close").onclick = () => document.getElementById("player-modal").classList.add("hidden");
 
-  // particles
+  // Star particles (white)
   function createParticles() {
     const container = document.getElementById('particles');
-    for (let i = 0; i < 130; i++) {
+    for (let i = 0; i < 180; i++) {
       const p = document.createElement('div');
       p.className = 'particle';
-      const s = Math.random() * 5 + 2;
+      const s = Math.random() * 3 + 1.5;
       p.style.width = `${s}px`;
       p.style.height = `${s}px`;
       p.style.left = `${Math.random() * 100}vw`;
-      p.style.animationDuration = `${Math.random() * 18 + 10}s`;
-      p.style.animationDelay = `-${Math.random() * 25}s`;
-      p.style.opacity = Math.random() * 0.4 + 0.15;
+      p.style.animationDuration = `${Math.random() * 20 + 12}s`;
+      p.style.animationDelay = `-${Math.random() * 30}s`;
+      p.style.opacity = Math.random() * 0.6 + 0.2;
       container.appendChild(p);
     }
   }
