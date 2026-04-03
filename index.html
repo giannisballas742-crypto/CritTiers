@@ -42,7 +42,7 @@
     100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
   }
 
-  /* ---- CRITTIERS TOP BAR ---- */
+  /* ---- CRITTIERS TOP BAR (blue accent) ---- */
   .top-bar {
     display: flex;
     flex-wrap: wrap;
@@ -61,7 +61,7 @@
   }
   .brand-name {
     font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #ffffff, #ffb3b3);
+    background: linear-gradient(135deg, #ffffff, #7cb8ff);
     background-clip: text; -webkit-background-clip: text; color: transparent;
   }
   .right-panel { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
@@ -71,7 +71,7 @@
     border-radius: 40px; width: 240px; font-family: 'Inter', monospace;
     font-size: 14px; color: #f0f3fa; outline: none;
   }
-  .search-input:focus { border-color: #db3e3e; box-shadow: 0 0 0 2px rgba(219,62,62,0.2); }
+  .search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
   .discord-btn {
     background: #5865F2; padding: 8px 18px; border-radius: 40px;
     font-weight: 600; font-size: 14px; color: white;
@@ -85,12 +85,12 @@
     backdrop-filter: blur(2px);
   }
   .server-label { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; color: #8f9bb5; }
-  .ip-address { background: #1a1d26; padding: 6px 14px; border-radius: 32px; font-family: monospace; font-weight: 500; font-size: 15px; color: #ffb7b7; }
+  .ip-address { background: #1a1d26; padding: 6px 14px; border-radius: 32px; font-family: monospace; font-weight: 500; font-size: 15px; color: #a3c6ff; }
   .copy-ip-btn { background: #2b2f3e; border: none; color: white; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 40px; cursor: pointer; transition: 0.2s; }
   .copy-ip-btn:hover { background: #3f4458; }
   .copy-feedback { font-size: 12px; color: #6cfe9e; margin-left: 6px; }
 
-  /* TABS (MCTiers style) */
+  /* TABS (blue underline & glow) */
   .tabs-container {
     display: flex;
     flex-wrap: wrap;
@@ -124,12 +124,12 @@
     left: 10%;
     width: 80%;
     height: 3px;
-    background: linear-gradient(90deg, #db3e3e, #ff8c8c, #ff4d4d);
+    background: linear-gradient(90deg, #3b82f6, #7cb8ff, #60a5fa);
     border-radius: 4px;
-    box-shadow: 0 0 8px #db3e3e;
+    box-shadow: 0 0 8px #3b82f6;
   }
 
-  /* PLAYER CARDS */
+  /* PLAYER CARDS (blue hover) */
   .player-card {
     background: #1f2937;
     padding: 12px;
@@ -144,12 +144,12 @@
   }
   .player-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 20px rgba(219,62,62,0.25);
-    border-color: rgba(219,62,62,0.4);
+    box-shadow: 0 12px 20px rgba(59,130,246,0.3);
+    border-color: rgba(59,130,246,0.5);
   }
   .player-img {
     width: 52px; height: 52px; border-radius: 50%;
-    border: 2px solid #db3e3e;
+    border: 2px solid #3b82f6;
     flex-shrink: 0;
   }
   .tier-header {
@@ -161,7 +161,7 @@
     cursor: help;
     font-size: 1.2rem;
   }
-  /* tooltip */
+  /* tooltip border blue */
   [data-tooltip] {
     position: relative;
     cursor: help;
@@ -179,7 +179,7 @@
     font-size: 0.85rem;
     font-weight: 500;
     white-space: nowrap;
-    border: 1px solid #db3e3e;
+    border: 1px solid #3b82f6;
     box-shadow: 0 8px 20px rgba(0,0,0,0.5);
     backdrop-filter: blur(2px);
     z-index: 9999;
@@ -189,7 +189,7 @@
   }
   [data-tooltip]:hover::after { opacity: 1; }
 
-  /* mode icons (now just colored circles with tier text) */
+  /* mode icons (colored circles) */
   .mode-icons {
     display: flex;
     gap: 10px;
@@ -216,7 +216,7 @@
     font-weight: bold;
     border: 2px solid #555;
   }
-  .mode-icon-container:hover .mode-icon-placeholder { transform: scale(1.05); border-color: #db3e3e; }
+  .mode-icon-container:hover .mode-icon-placeholder { transform: scale(1.05); border-color: #3b82f6; }
   .mode-tier {
     font-size: 10px;
     font-weight: 700;
@@ -226,7 +226,7 @@
     min-width: 38px;
   }
 
-  /* rank badges */
+  /* rank badges (unchanged) */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -251,11 +251,11 @@
   .region-badge.SA { background:#db2777; color:#fff; }
   .region-badge.AU { background:#fbbf24; color:#000; }
 
-  /* modal */
+  /* modal border blue */
   .modal-bg { background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); position:fixed; inset:0; display:flex; justify-content:center; align-items:center; z-index:1000; }
-  .modal { background:#1f2937; padding:24px; border-radius:28px; max-width:500px; width:90%; max-height:85vh; overflow-y:auto; border:1px solid #db3e3e; box-shadow:0 20px 35px rgba(0,0,0,0.6); }
+  .modal { background:#1f2937; padding:24px; border-radius:28px; max-width:500px; width:90%; max-height:85vh; overflow-y:auto; border:1px solid #3b82f6; box-shadow:0 20px 35px rgba(0,0,0,0.6); }
   .modal-close { cursor:pointer; float:right; font-size:1.8rem; line-height:1; color:#aaa; }
-  .modal-close:hover { color:#db3e3e; }
+  .modal-close:hover { color:#3b82f6; }
 
   @media (max-width: 700px) {
     .top-bar { flex-direction: column; align-items: flex-start; }
@@ -310,9 +310,8 @@
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
 
-  // NEW MODE LIST (as per request)
+  // NEW MODE LIST
   const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
-  // For tooltips and display inside player cards, we use these names (case-sensitive for CSV columns)
   const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
 
   function extractBaseTierFromCode(tierCode) {
@@ -367,7 +366,6 @@
     return { headers, data };
   }
 
-  // Generate mode icons HTML (without external images, just colored circles)
   function getModeIconsHTML(player) {
     let html = '<div class="mode-icons">';
     for (let mode of MODE_COLUMNS) {
@@ -380,7 +378,6 @@
       const peakTier = parsed.peakTier;
       const color = tierColors[baseTier] || "#666";
       let tooltipText = peakTier ? `⚡ Peak: ${peakTier} → ${tierPointsMap[peakTier]} pts` : `${displayTier} → ${tierPointsMap[baseTier]} pts`;
-      // short mode name for display
       let shortMode = mode.replace(" Mace", "").substring(0, 3);
       html += `<div class="mode-icon-container" data-tooltip="${tooltipText}">
                   <div class="mode-icon-placeholder" style="background:${color}20; border-color:${color};">
@@ -423,7 +420,7 @@
     if (!container) return;
     const title = document.createElement("h2");
     title.id = "mode-title";
-    title.className = "text-2xl font-bold border-l-4 border-red-500 pl-3 mb-5";
+    title.className = "text-2xl font-bold border-l-4 border-blue-500 pl-3 mb-5";
     title.textContent = mode === "Overall" ? "🏆 OVERALL RANKINGS" : `${mode.toUpperCase()} RANKINGS`;
     container.innerHTML = "";
     container.appendChild(title);
@@ -458,17 +455,16 @@
           </div>
           <div class="text-right flex flex-col items-end gap-1">
             ${getRankBadge(pointsVal, true)}
-            <div class="font-mono text-xl font-bold text-red-400">${r[pointsCol]} <span class="text-sm">pts</span></div>
+            <div class="font-mono text-xl font-bold text-blue-400">${r[pointsCol]} <span class="text-sm">pts</span></div>
           </div>
         </div>`;
       });
     } else {
-      // For specific mode: group by tier
       const groups = {};
       allRows.forEach(r => {
         const name = r[nameCol];
         if(!name) return;
-        const raw = r[mode];  // mode matches CSV column name exactly
+        const raw = r[mode];
         if(!raw) return;
         const baseTier = extractBaseTier(raw);
         if(!baseTier) return;
@@ -493,7 +489,7 @@
           htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}">
             <img src="${avatar}" class="player-img">
             <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(pointsVal, false)}</div>
-            <div class="font-mono text-sm ml-auto">${r[pointsCol] || 0} pts</div>
+            <div class="font-mono text-sm ml-auto text-blue-300">${r[pointsCol] || 0} pts</div>
           </div>`;
         });
         htmlOut += `</div>`;
@@ -501,7 +497,6 @@
     }
     document.getElementById("rankings").innerHTML = htmlOut;
 
-    // modal binding
     function getOverallRank(pObj) {
       const sorted = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
       const pName = pObj[nameCol];
@@ -522,12 +517,12 @@
           if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
           regionInline = `<span class="region-badge ${rc} ml-2 align-middle">${region}</span>`;
         }
-        let modalHtml = `<div class="flex justify-center mb-4"><img src="${avatar}" style="width:120px;height:120px;border-radius:50%;border:3px solid #db3e3e;"></div>
+        let modalHtml = `<div class="flex justify-center mb-4"><img src="${avatar}" style="width:120px;height:120px;border-radius:50%;border:3px solid #3b82f6;"></div>
         <h2 class="text-2xl font-bold text-center">${p[nameCol]} ${regionInline}</h2>
         <div class="flex justify-center mt-3">${getRankBadge(pointsVal, true)}</div>
         <div class="mt-6">${getModeIconsHTML(p)}</div>`;
         if(overallRank) modalHtml += `<div class="text-center mt-4"><span class="text-gray-400">Overall Rank:</span> <span class="text-xl font-bold text-yellow-400">#${overallRank}</span></div>`;
-        modalHtml += `<div class="text-center mt-2 border-t border-gray-600 pt-3"><span class="text-gray-400">Total Points:</span> <span class="text-2xl font-bold text-red-400">${p[pointsCol]}</span></div>`;
+        modalHtml += `<div class="text-center mt-2 border-t border-gray-600 pt-3"><span class="text-gray-400">Total Points:</span> <span class="text-2xl font-bold text-blue-400">${p[pointsCol]}</span></div>`;
         document.getElementById("modal-content").innerHTML = modalHtml;
         document.getElementById("player-modal").classList.remove("hidden");
       };
