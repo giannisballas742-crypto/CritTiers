@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>CritTiers · Mace PvP Rankings</title>
-<!-- Google Fonts + Tailwind -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -126,7 +125,7 @@
     box-shadow: 0 0 8px #3b82f6;
   }
 
-  /* PLAYER CARDS with banner effect for top 3 */
+  /* PLAYER CARDS with fancy top-3 banners */
   .player-card {
     background: #1f2937;
     padding: 12px;
@@ -141,52 +140,90 @@
     position: relative;
     overflow: hidden;
   }
-  /* Gold banner (top 1) */
+  /* Gold banner (fancy) */
   .player-card.gold-banner {
-    background: linear-gradient(135deg, #1f2937, #1f2937), linear-gradient(135deg, #ffd700, #ffb347);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    border: 1px solid transparent;
-    position: relative;
+    background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
+    border-left: 4px solid #ffd700;
+    box-shadow: 0 0 12px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,215,0,0.2);
   }
   .player-card.gold-banner::before {
+    content: "👑";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    font-size: 28px;
+    opacity: 0.2;
+    transform: rotate(15deg);
+    pointer-events: none;
+  }
+  .player-card.gold-banner::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ffd700, #ffb347, #ffd700);
-    border-radius: 16px 16px 0 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(255,215,0,0.08), transparent 70%);
+    pointer-events: none;
   }
   /* Silver banner */
+  .player-card.silver-banner {
+    background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
+    border-left: 4px solid #c0c0c0;
+    box-shadow: 0 0 10px rgba(192,192,192,0.25), inset 0 1px 0 rgba(192,192,192,0.15);
+  }
   .player-card.silver-banner::before {
+    content: "🏅";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    font-size: 28px;
+    opacity: 0.2;
+    transform: rotate(10deg);
+    pointer-events: none;
+  }
+  .player-card.silver-banner::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #c0c0c0, #e8e8e8, #c0c0c0);
-    border-radius: 16px 16px 0 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(192,192,192,0.06), transparent 70%);
+    pointer-events: none;
   }
   /* Bronze banner */
+  .player-card.bronze-banner {
+    background: linear-gradient(135deg, #1f2937 0%, #1a1f2c 100%);
+    border-left: 4px solid #cd7f32;
+    box-shadow: 0 0 10px rgba(205,127,50,0.25), inset 0 1px 0 rgba(205,127,50,0.1);
+  }
   .player-card.bronze-banner::before {
+    content: "🏅";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    font-size: 28px;
+    opacity: 0.2;
+    transform: rotate(5deg);
+    pointer-events: none;
+  }
+  .player-card.bronze-banner::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #cd7f32, #e6a374, #cd7f32);
-    border-radius: 16px 16px 0 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(205,127,50,0.06), transparent 70%);
+    pointer-events: none;
   }
   .player-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 20px rgba(59,130,246,0.3);
     border-color: rgba(59,130,246,0.5);
   }
-  /* Default avatar placeholder (no external image) */
+  /* Avatar placeholder */
   .player-avatar {
     width: 52px;
     height: 52px;
@@ -350,7 +387,6 @@
   const REGION_COLUMN_INDEX = 2;
   let allRows = [], nameCol = "", pointsCol = "", regionCol = "__region";
 
-  // Tier mapping (for kit tiers inside player cards)
   const tierPointsMap = { "HT1":60,"LT1":45,"HT2":30,"LT2":20,"HT3":10,"LT3":6,"HT4":4,"LT4":3,"HT5":2,"LT5":1 };
   const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
   const tierColors = { HT1:"#f1c40f", LT1:"#ffa600", HT2:"#bdc3c7", LT2:"#95a5a6", HT3:"#ff8531", LT3:"#f37324", HT4:"#55ffff", LT4:"#aaffff", HT5:"#5555ff", LT5:"#AAAAFF" };
@@ -358,7 +394,6 @@
   const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
   const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
 
-  // Role assignment based on overall rank
   function getRoleByRank(rank) {
     if (rank <= 3) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
     if (rank <= 28) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
@@ -374,12 +409,8 @@
     return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
   }
 
-  // Helper: get first letter of player name for avatar
-  function getInitial(name) {
-    return name ? name.charAt(0).toUpperCase() : "?";
-  }
+  function getInitial(name) { return name ? name.charAt(0).toUpperCase() : "?"; }
 
-  // Tier parsing
   function extractBaseTierFromCode(tierCode) {
     const match = tierCode.match(/(HT[1-5]|LT[1-5])/i);
     return match ? match[1].toUpperCase() : null;
@@ -446,7 +477,6 @@
     nameCol = headers.find(h=>/name|player/i.test(h)) || headers[0];
     pointsCol = headers.find(h=>/points/i.test(h)) || headers[1];
     
-    // Compute overall rank
     const sortedByPoints = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
     sortedByPoints.forEach((player, idx) => { player.overallRank = idx + 1; });
     
@@ -552,7 +582,6 @@
     }
     document.getElementById("rankings").innerHTML = htmlOut;
 
-    // Modal click handler
     document.querySelectorAll(".player-card").forEach(card => {
       card.onclick = () => {
         const p = JSON.parse(card.dataset.player.replace(/&apos;/g, "'"));
@@ -578,7 +607,6 @@
     });
   }
 
-  // Search filter
   document.getElementById("search-input").addEventListener("input", e => {
     const term = e.target.value.toLowerCase();
     document.querySelectorAll(".player-card").forEach(card => {
@@ -586,7 +614,6 @@
     });
   });
 
-  // Copy IP
   const copyBtn = document.getElementById("copyIpButton");
   const ipSpan = document.getElementById("serverIpText");
   const toastSpan = document.getElementById("copyToast");
@@ -596,10 +623,8 @@
     setTimeout(() => toastSpan.style.display = "none", 1500);
   });
 
-  // Modal close
   document.getElementById("modal-close").onclick = () => document.getElementById("player-modal").classList.add("hidden");
 
-  // Star particles
   function createParticles() {
     const container = document.getElementById('particles');
     for (let i = 0; i < 180; i++) {
