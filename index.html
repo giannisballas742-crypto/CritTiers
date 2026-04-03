@@ -41,7 +41,7 @@
     100% { transform: translateY(-100px) scale(0.8); opacity: 0; }
   }
 
-  /* ---- CRITTIERS TOP BAR (tightened) ---- */
+  /* ---- CRITTIERS TOP BAR ---- */
   .top-bar {
     display: flex;
     flex-wrap: wrap;
@@ -89,7 +89,7 @@
   .copy-ip-btn:hover { background: #3f4458; }
   .copy-feedback { font-size: 11px; color: #6cfe9e; margin-left: 4px; }
 
-  /* TABS (blue) */
+  /* TABS */
   .tabs-container {
     display: flex;
     flex-wrap: wrap;
@@ -126,7 +126,7 @@
     box-shadow: 0 0 8px #3b82f6;
   }
 
-  /* PLAYER CARDS */
+  /* PLAYER CARDS with banner effect for top 3 */
   .player-card {
     background: #1f2937;
     padding: 12px;
@@ -138,15 +138,67 @@
     transition: 0.2s;
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Gold banner (top 1) */
+  .player-card.gold-banner {
+    background: linear-gradient(135deg, #1f2937, #1f2937), linear-gradient(135deg, #ffd700, #ffb347);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    border: 1px solid transparent;
+    position: relative;
+  }
+  .player-card.gold-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffd700, #ffb347, #ffd700);
+    border-radius: 16px 16px 0 0;
+  }
+  /* Silver banner */
+  .player-card.silver-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c0c0c0, #e8e8e8, #c0c0c0);
+    border-radius: 16px 16px 0 0;
+  }
+  /* Bronze banner */
+  .player-card.bronze-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #cd7f32, #e6a374, #cd7f32);
+    border-radius: 16px 16px 0 0;
   }
   .player-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 20px rgba(59,130,246,0.3);
     border-color: rgba(59,130,246,0.5);
   }
-  .player-img {
-    width: 52px; height: 52px; border-radius: 50%;
+  /* Default avatar placeholder (no external image) */
+  .player-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #2d3748;
     border: 2px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    color: #a0aec0;
     flex-shrink: 0;
   }
   .tier-header {
@@ -218,7 +270,7 @@
     min-width: 38px;
   }
 
-  /* RANK BADGES (CritTiers roles) */
+  /* Rank badges (CritTiers roles) */
   .rank {
     font-weight: 700;
     display: inline-flex;
@@ -306,7 +358,7 @@
   const MODES = ["Overall", "Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
   const MODE_COLUMNS = ["Spearmace", "MaceCart", "Modern", "DSMP Mace", "NethSMP"];
 
-  // ----- NEW ROLE ASSIGNMENT BASED ON OVERALL RANK -----
+  // Role assignment based on overall rank
   function getRoleByRank(rank) {
     if (rank <= 3) return { name: "CritTiers Master", icon: "<i class='fas fa-crown'></i>", className: "master", symbol: "🏆" };
     if (rank <= 28) return { name: "CritTiers Ace", icon: "<i class='fas fa-shield-alt'></i>", className: "ace", symbol: "⚡" };
@@ -322,7 +374,12 @@
     return `<span class="${cls}"><i class="${r.icon.split(' ')[1]}"></i> ${r.name} ${r.symbol}</span>`;
   }
 
-  // Tier parsing (unchanged)
+  // Helper: get first letter of player name for avatar
+  function getInitial(name) {
+    return name ? name.charAt(0).toUpperCase() : "?";
+  }
+
+  // Tier parsing
   function extractBaseTierFromCode(tierCode) {
     const match = tierCode.match(/(HT[1-5]|LT[1-5])/i);
     return match ? match[1].toUpperCase() : null;
@@ -389,10 +446,9 @@
     nameCol = headers.find(h=>/name|player/i.test(h)) || headers[0];
     pointsCol = headers.find(h=>/points/i.test(h)) || headers[1];
     
-    // Compute overall rank for each player (by points descending)
+    // Compute overall rank
     const sortedByPoints = [...allRows].sort((a,b)=>parseFloat(b[pointsCol]||0)-parseFloat(a[pointsCol]||0));
     sortedByPoints.forEach((player, idx) => { player.overallRank = idx + 1; });
-    // Also store rank back into allRows (since references are same)
     
     const tabsDiv = document.getElementById("tabs");
     tabsDiv.innerHTML = "";
@@ -430,22 +486,23 @@
       sorted.forEach((r, idx) => {
         const name = r[nameCol];
         if(!name) return;
-        const pointsVal = parseFloat(r[pointsCol]||0);
         const rank = idx + 1;
-        const avatar = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`;
+        const pointsVal = parseFloat(r[pointsCol]||0);
         const region = r[regionCol];
+        const initial = getInitial(name);
+        let bannerClass = "";
         let medalHtml = "";
-        if(rank===1) medalHtml = `<i class="fas fa-crown text-yellow-400 mr-1"></i>`;
-        else if(rank===2) medalHtml = `<i class="fas fa-medal text-gray-300 mr-1"></i>`;
-        else if(rank===3) medalHtml = `<i class="fas fa-medal text-amber-600 mr-1"></i>`;
+        if(rank === 1) { bannerClass = "gold-banner"; medalHtml = `<i class="fas fa-crown text-yellow-400 mr-1"></i>`; }
+        else if(rank === 2) { bannerClass = "silver-banner"; medalHtml = `<i class="fas fa-medal text-gray-300 mr-1"></i>`; }
+        else if(rank === 3) { bannerClass = "bronze-banner"; medalHtml = `<i class="fas fa-medal text-amber-600 mr-1"></i>`; }
         let regionHTML = "";
         if(region) {
           let rc = ""; const reg = region.toUpperCase().trim();
           if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
           regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
         }
-        htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${rank}">
-          <img src="${avatar}" class="player-img">
+        htmlOut += `<div class="player-card ${bannerClass}" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${rank}">
+          <div class="player-avatar">${initial}</div>
           <div class="flex-1">
             <div class="flex items-center flex-wrap gap-2"><span class="font-bold text-lg">${rank}.</span> ${medalHtml}<span class="font-semibold">${name}</span>${regionHTML}</div>
             ${getModeIconsHTML(r)}
@@ -474,10 +531,10 @@
         htmlOut += `<div class="mb-6"><div class="tier-header" style="background:${tierColors[tier]}" data-tooltip="${tier} → ${pointsValue} points">${tier}</div>`;
         groups[tier].forEach(r => {
           const name = r[nameCol];
-          const avatar = `https://mc-heads.net/avatar/${encodeURIComponent(name)}/64`;
           const region = r[regionCol];
           const pointsVal = parseFloat(r[pointsCol]||0);
           const overallRank = r.overallRank || 999;
+          const initial = getInitial(name);
           let regionHTML = "";
           if(region) {
             let rc = ""; const reg = region.toUpperCase().trim();
@@ -485,7 +542,7 @@
             regionHTML = `<span class="region-badge ${rc}">${region}</span>`;
           }
           htmlOut += `<div class="player-card" data-player='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-points="${pointsVal}" data-rank="${overallRank}">
-            <img src="${avatar}" class="player-img">
+            <div class="player-avatar">${initial}</div>
             <div class="flex items-center gap-2 flex-wrap flex-1"><span class="font-semibold">${name}</span>${regionHTML}${getRankBadge(overallRank, false)}</div>
             <div class="font-mono text-sm ml-auto text-blue-300">${r[pointsCol] || 0} pts</div>
           </div>`;
@@ -499,17 +556,17 @@
     document.querySelectorAll(".player-card").forEach(card => {
       card.onclick = () => {
         const p = JSON.parse(card.dataset.player.replace(/&apos;/g, "'"));
-        const avatar = `https://mc-heads.net/avatar/${encodeURIComponent(p[nameCol])}/128`;
         const region = p[regionCol];
         const pointsVal = parseFloat(p[pointsCol]||0);
         const overallRank = p.overallRank || 999;
+        const initial = getInitial(p[nameCol]);
         let regionInline = '';
         if(region) {
           let rc = ""; const reg = region.toUpperCase().trim();
           if(reg==="EU") rc="EU"; else if(reg==="AS") rc="AS"; else if(reg==="NA") rc="NA"; else if(reg==="SA") rc="SA"; else if(reg==="AU") rc="AU";
           regionInline = `<span class="region-badge ${rc} ml-2 align-middle">${region}</span>`;
         }
-        let modalHtml = `<div class="flex justify-center mb-4"><img src="${avatar}" style="width:120px;height:120px;border-radius:50%;border:3px solid #3b82f6;"></div>
+        let modalHtml = `<div class="flex justify-center mb-4"><div class="player-avatar" style="width:100px;height:100px;font-size:42px;border-width:3px;">${initial}</div></div>
         <h2 class="text-2xl font-bold text-center">${p[nameCol]} ${regionInline}</h2>
         <div class="flex justify-center mt-3">${getRankBadge(overallRank, true)}</div>
         <div class="mt-6">${getModeIconsHTML(p)}</div>
